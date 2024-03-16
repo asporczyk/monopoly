@@ -17,4 +17,4 @@ Projekt został utworzony w ramach przedmiotu "Projekt informatyczny: Zaawansowa
 - Moduł zarządzania grą (C#)
 
 ## Diagramy
-- (Diagram przypadków użycia)[./Diagrams/UseCases.md]
+- [Diagram przypadków użycia](./Diagrams/UseCases.md)
