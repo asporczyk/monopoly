@@ -1,10 +1,11 @@
 # Projekt Monopoly - Grupa B
+## Opis projektu
 Projekt został utworzony w ramach przedmiotu "Projekt informatyczny: Zaawansowane zagadnienia algorytmiki i programowania" na 3 semestrze Informatyki drugiego stopnia na Akademii Ekonomiczno-Humanistycznej w Warszawie.
 
-# Wybrane języki programowania:
+## Wybrane języki programowania:
 - C#
 - TypeScript
 
-# Wybrane technologie:
+## Wybrane technologie:
 - .NET
 - Vue.js
