@@ -8,6 +8,7 @@ Projekt został utworzony w ramach przedmiotu "Projekt informatyczny: Zaawansowa
 ## Wybrane technologie:
 - .NET
 - Vue.js
+- SignalR
 
 ## Podział na moduły:
 - Moduł interfejsu użytkownika (Vue.js)
