@@ -8,3 +8,9 @@ Projekt został utworzony w ramach przedmiotu "Projekt informatyczny: Zaawansowa
 ## Wybrane technologie:
 - .NET
 - Vue.js
+
+## Podział na moduły:
+- Moduł interfejsu użytkownika (Vue.js)
+- Moduł komunikacji z serwerem (SignalR)
+- Moduł logiki gry (C#)
+- Moduł zarządzania grą (C#)
