@@ -17,7 +17,7 @@ Projekt został utworzony w ramach przedmiotu "Projekt informatyczny: Zaawansowa
 - Moduł zarządzania grą (C#)
 
 ## Dokumentacja
-- [Dokumentacja frontend](./Monopoly.Web/readme.md)
+- [Dokumentacja frontend](./Monopoly.Web/README.md)
 
 ## Diagramy
 - [Diagram przypadków użycia](./Diagrams/UseCases.md)
