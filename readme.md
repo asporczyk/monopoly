@@ -15,3 +15,6 @@ Projekt został utworzony w ramach przedmiotu "Projekt informatyczny: Zaawansowa
 - Moduł komunikacji z serwerem (SignalR)
 - Moduł logiki gry (C#)
 - Moduł zarządzania grą (C#)
+
+## Diagramy
+- [Diagram przypadków użycia](./Diagrams/UseCases.md)
