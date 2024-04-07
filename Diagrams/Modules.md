@@ -1,10 +1,10 @@
 # Diagram modułów
 ```mermaid
 flowchart LR
-    Web[Moduł interfejsu użytkownika - Vue.js]
-    CommunicationHub[Moduł komunikacji z serwerem - SignalR]
-    GameLogic[Moduł logiki gry - C#]
-    GameManagement[Moduł zarządzania grą - C#]
+    Web[Moduł interfejsu użytkownika]
+    CommunicationHub[Moduł komunikacji z serwerem]
+    GameLogic[Moduł logiki gry]
+    GameManagement[Moduł zarządzania grą]
     WebSocket([WebSocket])
     
     Web <--> WebSocket <--> CommunicationHub 

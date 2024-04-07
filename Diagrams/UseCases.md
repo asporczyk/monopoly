@@ -44,6 +44,14 @@ flowchart LR
   makesTheMove --> getsOnCommunityChest --> getsCard
   makesTheMove --> getsOnTax --> pays
   
+  getsStartBonus --> getsOnGoToJail
+  getsStartBonus --> getsOnFreeParking
+  getsStartBonus --> getsOnEmptyProperty
+  getsStartBonus --> getsOnOwnedProperty
+  getsStartBonus --> getsOnChance
+  getsStartBonus --> getsOnCommunityChest
+  getsStartBonus --> getsOnTax
+  
   goesToJail --> paysTheFine --> getsOutOfJail
   goesToJail --> usesGetOutOfJailCard --> getsOutOfJail
   goesToJail --> rollsDouble --> getsOutOfJail
