@@ -28,3 +28,20 @@ coverage
 *.sw?
 
 *.tsbuildinfo
+### Vue template
+# gitignore template for Vue.js projects
+#
+# Recommended template: Node.gitignore
+
+docs/_book
+
+test/
+
+### Vuejs template
+# Recommended template: Node.gitignore
+
+node_modules/
+dist/
+npm-debug.log
+yarn-error.log
+
