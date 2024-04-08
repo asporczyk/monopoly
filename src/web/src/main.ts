@@ -1,14 +1,47 @@
-import './assets/main.css'
-
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 
 import App from './App.vue'
 import router from './router'
+import { createI18n, useI18n } from 'vue-i18n'
+import * as components from 'vuetify/components'
+import * as directives from 'vuetify/directives'
+import { createVueI18nAdapter } from 'vuetify/locale/adapters/vue-i18n'
+import { createVuetify } from 'vuetify'
+import { aliases, mdi } from 'vuetify/iconsets/mdi'
+import messages from '@intlify/unplugin-vue-i18n/messages'
 
-const app = createApp(App)
+export const i18n = createI18n({
+  legacy: false,
+  globalInjection: true,
+  fallbackLocale: 'en',
+  locale: navigator.language,
+  missingWarn: false,
+  fallbackWarn: false,
+  messages,
+})
 
-app.use(createPinia())
-app.use(router)
+const vuetify = createVuetify({
+  locale: {
+    adapter: createVueI18nAdapter({ i18n, useI18n }),
+  },
+  components,
+  directives,
+  theme: {
+    defaultTheme: localStorage.getItem('theme') ?? 'light',
+  },
+  icons: {
+    defaultSet: 'mdi',
+    aliases,
+    sets: {
+      mdi,
+    },
+  },
+})
 
-app.mount('#app')
+createApp(App)
+  .use(createPinia())
+  .use(router)
+  .use(vuetify)
+  .use(i18n)
+  .mount('#app')
