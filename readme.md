@@ -23,7 +23,8 @@ programowania" na 3 semestrze Informatyki drugiego stopnia na Akademii Ekonomicz
 
 ## Dokumentacja
 
-- [Dokumentacja frontend](./Monopoly.Web/README.md)
+- [Dokumentacja frontend](./src/web/README.md)
+- [Dokumentacja backend](./src/server/README.md)
 
 ## Diagramy
 
