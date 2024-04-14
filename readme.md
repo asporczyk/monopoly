@@ -30,3 +30,4 @@ programowania" na 3 semestrze Informatyki drugiego stopnia na Akademii Ekonomicz
 
 - [Diagram przypadków użycia](./Diagrams/UseCases.md)
 - [Diagram modułów](./Diagrams/Modules.md)
+- [Diagramy sekwencji](./Diagrams/Sequences.md)
