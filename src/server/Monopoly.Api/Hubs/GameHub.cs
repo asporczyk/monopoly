@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.SignalR;
+using Monopoly.GameManagement;
+using Monopoly.GameManagement.Models;
 
 namespace Monopoly.Api.Hubs;
 
@@ -11,14 +13,18 @@ internal sealed class GameHub(ILogger<GameHub> logger) : Hub
         await base.OnConnectedAsync();
     }
 
-    // TODO: Add methods to handle game logic
-
-    // TODO: Remove this method, it's just an example
-    public async Task SendMessage(MessageDto message)
+    public async Task JoinGame(string nickname)
     {
-        logger.LogInformation("Received message from {User}: {Message}", message.User, message.Message);
-        await Clients.All.SendAsync("ReceiveMessage", message);
+        var player = new Player { Id = Context.ConnectionId, Name = nickname };
+        GameHost.AddPlayer(player);
+        await Clients.All.SendAsync("PlayerJoined", player);
+    }
+
+    public async Task Ready()
+    {
+        var player = GameHost.Players.First(p => p.Id == Context.ConnectionId);
+        player.IsReady = true;
+
+        await Clients.All.SendAsync("PlayerReady", player.Id);
     }
 }
-
-public record MessageDto(string? User, string? Message);
