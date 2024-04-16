@@ -4,7 +4,7 @@ using Monopoly.GameManagement.Models;
 
 namespace Monopoly.Api.Hubs;
 
-internal sealed class GameHub(ILogger<GameHub> logger) : Hub
+internal sealed class GameHub : Hub
 {
     public override async Task OnConnectedAsync()
     {
@@ -16,13 +16,13 @@ internal sealed class GameHub(ILogger<GameHub> logger) : Hub
     public async Task JoinGame(string nickname)
     {
         var player = new Player { Id = Context.ConnectionId, Nick = nickname };
-        GameHost.AddPlayer(player);
+        GameState.AddPlayer(player);
         await Clients.All.SendAsync("PlayerJoined", player);
     }
 
     public async Task Ready()
     {
-        var player = GameHost.Players.First(p => p.Id == Context.ConnectionId);
+        var player = GameState.Players.First(p => p.Id == Context.ConnectionId);
         player.IsReady = true;
 
         await Clients.All.SendAsync("PlayerReady", player.Nick);
@@ -30,13 +30,13 @@ internal sealed class GameHub(ILogger<GameHub> logger) : Hub
 
     public async Task StartGame()
     {
-        if (!GameHost.IsEveryoneReady())
+        if (!GameState.IsEveryoneReady())
         {
             await Clients.Caller.SendAsync("NotEveryoneReady");
             return;
         }
 
-        GameHost.StartGame();
+        GameState.StartGame();
         await Clients.All.SendAsync("GameStarted");
     }
 }

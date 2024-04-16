@@ -2,8 +2,12 @@ using Monopoly.GameManagement.Models;
 
 namespace Monopoly.GameManagement;
 
-public static class GameHost
+public static class GameState
 {
+    // TODO: Check after rund if player has money else bankrupt
+    // TODO: Count rounds
+    // TODO: Check winner
+
     public static int Round { get; private set; } = 1;
 
     public static bool IsGameRunning { get; private set; }

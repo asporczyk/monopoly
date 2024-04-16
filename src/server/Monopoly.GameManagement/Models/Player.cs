@@ -14,7 +14,7 @@ public class Player
     public string Id { get; init; } = null!;
     public int Money { get; set; } = 1500;
     public int Position { get; set; } = 0;
-    public int Order { get; set; } = GameHost.Players.Count;
+    public int Order { get; set; } = GameState.Players.Count;
     public bool IsInJail { get; set; }
     public int JailTurns { get; set; } = 0;
     public bool IsBankrupt { get; set; }
