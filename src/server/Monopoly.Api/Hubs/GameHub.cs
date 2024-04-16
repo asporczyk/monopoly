@@ -15,7 +15,7 @@ internal sealed class GameHub : Hub
     public async Task JoinGame(string nickname)
     {
         var id = Context.ConnectionId;
-        var player = PlayersState.AddPlayer(nickname, id);
+        var player = PlayersState.AddPlayer(id, nickname);
         await Clients.All.SendAsync("PlayerJoined", player);
     }
 
@@ -38,7 +38,23 @@ internal sealed class GameHub : Hub
             return;
         }
 
+        if (GameState.Game.IsRunning)
+        {
+            await Clients.Caller.SendAsync("GameAlreadyStarted");
+            return;
+        }
+
         GameState.StartGame();
         await Clients.All.SendAsync("GameStarted");
+    }
+
+    public async Task BuyTest()
+    {
+        var player = PlayersState.GetPlayerById(Context.ConnectionId);
+        if (player != null)
+        {
+            BoardState.Fields[3].Property?.Sell(player);
+            await Clients.All.SendAsync("PlayerBought", player.Nickname);
+        }
     }
 }

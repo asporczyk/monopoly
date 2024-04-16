@@ -1,9 +1,12 @@
 using Monopoly.GameCore.Models;
+using Serilog;
 
 namespace Monopoly.GameManagement.States;
 
 public static class RoundState
 {
+    private static readonly ILogger Log = Serilog.Log.ForContext(typeof(RoundState));
+
     private const int MaxRounds = 40;
     private static Round Round { get; set; } = new();
 
@@ -15,10 +18,14 @@ public static class RoundState
         {
             Round.ResetPlayer();
             Round.NextRound();
+
+            Log.Information("Next round");
         }
         else
         {
             Round.NextPlayer();
+
+            Log.Information("Next player");
         }
     }
 

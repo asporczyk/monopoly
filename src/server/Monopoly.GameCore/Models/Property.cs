@@ -1,7 +1,11 @@
+using Serilog;
+
 namespace Monopoly.GameCore.Models;
 
 public class Property
 {
+    private static readonly ILogger Log = Serilog.Log.ForContext(typeof(Property));
+
     public string Name { get; init; } = null!;
     public int Price { get; init; }
     public int Rent { get; init; }
@@ -15,11 +19,13 @@ public class Property
     {
         if (OwnerId != null)
         {
+            Log.Information("Property {Name} is already owned by {OwnerId}", Name, OwnerId);
             return;
         }
 
         if (player.Money < Price)
         {
+            Log.Information("Player {PlayerId} does not have enough money to buy {Name}", player.Id, Name);
             return;
         }
 
@@ -31,6 +37,7 @@ public class Property
     {
         if (OwnerId != player.Id)
         {
+            Log.Information("Player {PlayerId} does not own {Name}", player.Id, Name);
             return;
         }
 
@@ -42,11 +49,13 @@ public class Property
     {
         if (OwnerId != player.Id)
         {
+            Log.Information("Player {PlayerId} does not own {Name}", player.Id, Name);
             return;
         }
 
         if (player.Money < HouseCost)
         {
+            Log.Information("Player {PlayerId} does not have enough money to buy a house for {Name}", player.Id, Name);
             return;
         }
 
@@ -58,21 +67,25 @@ public class Property
     {
         if (OwnerId != player.Id)
         {
+            Log.Information("Player {PlayerId} does not own {Name}", player.Id, Name);
             return;
         }
 
         if (player.Money < HotelCost)
         {
+            Log.Information("Player {PlayerId} does not have enough money to buy a hotel for {Name}", player.Id, Name);
             return;
         }
 
         if (Houses < 4)
         {
+            Log.Information("Player {PlayerId} does not have enough houses to buy a hotel for {Name}", player.Id, Name);
             return;
         }
 
         if (HasHotel)
         {
+            Log.Information("Player {PlayerId} already has a hotel for {Name}", player.Id, Name);
             return;
         }
 
@@ -86,11 +99,13 @@ public class Property
     {
         if (OwnerId == null)
         {
+            Log.Information("Property {Name} is not owned", Name);
             return;
         }
 
         if (OwnerId == player.Id)
         {
+            Log.Information("Player {PlayerId} owns {Name}", player.Id, Name);
             return;
         }
 
