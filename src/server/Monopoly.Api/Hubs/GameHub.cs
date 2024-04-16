@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.SignalR;
-using Monopoly.GameManagement;
-using Monopoly.GameManagement.Models;
+using Monopoly.GameManagement.States;
 
 namespace Monopoly.Api.Hubs;
 
@@ -15,22 +14,25 @@ internal sealed class GameHub : Hub
 
     public async Task JoinGame(string nickname)
     {
-        var player = new Player { Id = Context.ConnectionId, Nick = nickname };
-        GameState.AddPlayer(player);
+        var id = Context.ConnectionId;
+        var player = PlayersState.AddPlayer(nickname, id);
         await Clients.All.SendAsync("PlayerJoined", player);
     }
 
     public async Task Ready()
     {
-        var player = GameState.Players.First(p => p.Id == Context.ConnectionId);
-        player.IsReady = true;
+        var player = PlayersState.GetPlayerById(Context.ConnectionId);
+        if (player != null)
+        {
+            player.IsReady = true;
 
-        await Clients.All.SendAsync("PlayerReady", player.Nick);
+            await Clients.All.SendAsync("PlayerReady", player.Nickname);
+        }
     }
 
     public async Task StartGame()
     {
-        if (!GameState.IsEveryoneReady())
+        if (!PlayersState.IsEveryoneReady())
         {
             await Clients.Caller.SendAsync("NotEveryoneReady");
             return;

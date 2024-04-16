@@ -1,4 +1,4 @@
-namespace Monopoly.GameManagement.Helpers;
+namespace Monopoly.GameLogic.Helpers;
 
 public static class NicknameGenerator
 {

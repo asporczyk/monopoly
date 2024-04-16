@@ -1,10 +1,11 @@
-namespace Monopoly.GameLogic;
+using Monopoly.GameCore.Models;
 
-public static class Jail
+namespace Monopoly.GameLogic.Services;
+
+public static class JailService
 {
     private const int JailBail = 50;
 
-    // TODO: Fix reference
     public static void GoToJail(Player player)
     {
         player.IsInJail = true;

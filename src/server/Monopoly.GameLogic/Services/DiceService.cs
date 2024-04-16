@@ -1,6 +1,6 @@
-namespace Monopoly.GameLogic;
+namespace Monopoly.GameLogic.Services;
 
-public static class Dice
+public static class DiceService
 {
     private static readonly Random Random = new();
 

@@ -6,4 +6,8 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Monopoly.GameLogic\Monopoly.GameLogic.csproj" />
+    </ItemGroup>
+
 </Project>
