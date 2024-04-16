@@ -4,13 +4,13 @@ namespace Monopoly.GameManagement.Models;
 
 public class Player
 {
-    public string? Name
+    public string? Nick
     {
-        get => _name;
-        set => _name = !string.IsNullOrEmpty(value) ? value : NicknameGenerator.Generate();
+        get => _nick;
+        init => _nick = !string.IsNullOrEmpty(value) ? value : NicknameGenerator.Generate();
     }
 
-    private string _name = null!;
+    private readonly string _nick = null!;
     public string Id { get; init; } = null!;
     public int Money { get; set; } = 1500;
     public int Position { get; set; } = 0;

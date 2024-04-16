@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Monopoly.GameManagement.Models;
 
 namespace Monopoly.GameManagement;
@@ -20,4 +19,6 @@ public static class GameHost
     public static void RemovePlayer(Player player) => Players.Remove(player);
 
     public static void NextRound() => Round++;
+
+    public static bool IsEveryoneReady() => Players.All(p => p.IsReady);
 }
