@@ -1,24 +1,60 @@
 using Microsoft.AspNetCore.SignalR;
+using Monopoly.GameManagement.States;
 
 namespace Monopoly.Api.Hubs;
 
-internal sealed class GameHub(ILogger<GameHub> logger) : Hub
+internal sealed class GameHub : Hub
 {
     public override async Task OnConnectedAsync()
     {
         // Send the connection ID to the client
-        await Clients.Client(Context.ConnectionId).SendAsync("ReceiveConnectionId", Context.ConnectionId);
+        await Clients.Caller.SendAsync("ReceiveConnectionId", Context.ConnectionId);
         await base.OnConnectedAsync();
     }
 
-    // TODO: Add methods to handle game logic
-
-    // TODO: Remove this method, it's just an example
-    public async Task SendMessage(MessageDto message)
+    public async Task JoinGame(string nickname)
     {
-        logger.LogInformation("Received message from {User}: {Message}", message.User, message.Message);
-        await Clients.All.SendAsync("ReceiveMessage", message);
+        var id = Context.ConnectionId;
+        var player = PlayersState.AddPlayer(id, nickname);
+        await Clients.All.SendAsync("PlayerJoined", player);
+    }
+
+    public async Task Ready()
+    {
+        var player = PlayersState.GetPlayerById(Context.ConnectionId);
+        if (player != null)
+        {
+            player.IsReady = true;
+
+            await Clients.All.SendAsync("PlayerReady", player.Nickname);
+        }
+    }
+
+    public async Task StartGame()
+    {
+        if (!PlayersState.IsEveryoneReady())
+        {
+            await Clients.Caller.SendAsync("NotEveryoneReady");
+            return;
+        }
+
+        if (GameState.Game.IsRunning)
+        {
+            await Clients.Caller.SendAsync("GameAlreadyStarted");
+            return;
+        }
+
+        GameState.StartGame();
+        await Clients.All.SendAsync("GameStarted");
+    }
+
+    public async Task BuyTest()
+    {
+        var player = PlayersState.GetPlayerById(Context.ConnectionId);
+        if (player != null)
+        {
+            BoardState.Fields[3].Property?.Sell(player);
+            await Clients.All.SendAsync("PlayerBought", player.Nickname);
+        }
     }
 }
-
-public record MessageDto(string? User, string? Message);
