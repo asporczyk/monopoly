@@ -12,7 +12,7 @@ public class RoundState(PlayersState playersState, ILogger<RoundState> logger)
 
     public void NextPlayer()
     {
-        if (Round.CurrentPlayer >= playersState.Players.Count - 1)
+        if (Round.CurrentPlayerIndex >= playersState.Players.Count - 1)
         {
             Round.ResetPlayer();
             Round.NextRound();
@@ -35,5 +35,5 @@ public class RoundState(PlayersState playersState, ILogger<RoundState> logger)
 
     public int GetCurrentRound() => Round.CurrentRound;
 
-    public int GetCurrentPlayer() => Round.CurrentPlayer;
+    public int GetCurrentPlayerIndex() => Round.CurrentPlayerIndex;
 }

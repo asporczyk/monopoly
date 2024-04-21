@@ -4,9 +4,16 @@ using Monopoly.GameLogic.Generators;
 
 namespace Monopoly.GameManagement.States;
 
-public class GameState(RoundState roundState, BoardState boardState, ILogger<GameState> logger)
+public class GameState(
+    RoundState roundState,
+    BoardState boardState,
+    PlayersState playersState,
+    ILogger<GameState> logger
+)
 {
     public Game Game { get; } = new();
+
+    public string GetCurrentPlayerId() => playersState.Players[roundState.GetCurrentPlayerIndex()].Id;
 
     public void Reset()
     {

@@ -1,9 +1,15 @@
 using Microsoft.AspNetCore.SignalR;
+using Monopoly.GameLogic.Services;
 using Monopoly.GameManagement.States;
 
 namespace Monopoly.Api.Hubs;
 
-internal sealed class GameHub(GameState gameState, PlayersState playersState, BoardState boardState) : Hub
+internal sealed class GameHub(
+    GameState gameState,
+    PlayersState playersState,
+    BoardState boardState,
+    RoundState roundState
+) : Hub
 {
     public override async Task OnConnectedAsync()
     {
@@ -45,7 +51,22 @@ internal sealed class GameHub(GameState gameState, PlayersState playersState, Bo
         }
 
         gameState.StartGame();
+        var currentPlayer = playersState.Players[roundState.GetCurrentPlayerIndex()];
+
         await Clients.All.SendAsync("GameStarted");
+        await Clients.Client(currentPlayer.Id).SendAsync("YourTurn");
+    }
+
+    public async Task RollDice()
+    {
+        var player = playersState.GetPlayerById(Context.ConnectionId);
+        if (player != null && player.Id == gameState.GetCurrentPlayerId())
+        {
+            var roll = DiceService.RollDouble();
+            BoardState.MovePlayer(player, roll);
+
+            // TODO: Implement field actions
+        }
     }
 
     public async Task BuyTest()
