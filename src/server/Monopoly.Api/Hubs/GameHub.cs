@@ -3,7 +3,7 @@ using Monopoly.GameManagement.States;
 
 namespace Monopoly.Api.Hubs;
 
-internal sealed class GameHub : Hub
+internal sealed class GameHub(GameState gameState, PlayersState playersState, BoardState boardState) : Hub
 {
     public override async Task OnConnectedAsync()
     {
@@ -15,13 +15,13 @@ internal sealed class GameHub : Hub
     public async Task JoinGame(string nickname)
     {
         var id = Context.ConnectionId;
-        var player = PlayersState.AddPlayer(id, nickname);
+        var player = playersState.AddPlayer(id, nickname);
         await Clients.All.SendAsync("PlayerJoined", player);
     }
 
     public async Task Ready()
     {
-        var player = PlayersState.GetPlayerById(Context.ConnectionId);
+        var player = playersState.GetPlayerById(Context.ConnectionId);
         if (player != null)
         {
             player.IsReady = true;
@@ -32,28 +32,28 @@ internal sealed class GameHub : Hub
 
     public async Task StartGame()
     {
-        if (!PlayersState.IsEveryoneReady())
+        if (!playersState.IsEveryoneReady())
         {
             await Clients.Caller.SendAsync("NotEveryoneReady");
             return;
         }
 
-        if (GameState.Game.IsRunning)
+        if (gameState.Game.IsRunning)
         {
             await Clients.Caller.SendAsync("GameAlreadyStarted");
             return;
         }
 
-        GameState.StartGame();
+        gameState.StartGame();
         await Clients.All.SendAsync("GameStarted");
     }
 
     public async Task BuyTest()
     {
-        var player = PlayersState.GetPlayerById(Context.ConnectionId);
+        var player = playersState.GetPlayerById(Context.ConnectionId);
         if (player != null)
         {
-            BoardState.Fields[3].Property?.Sell(player);
+            boardState.Fields[3].Property?.Sell(player);
             await Clients.All.SendAsync("PlayerBought", player.Nickname);
         }
     }

@@ -1,20 +1,18 @@
+using Microsoft.Extensions.Logging;
 using Monopoly.GameCore.Models;
 using Monopoly.GameLogic.Helpers;
-using Serilog;
 
 namespace Monopoly.GameManagement.States;
 
-public static class PlayersState
+public class PlayersState(ILogger<PlayersState> logger)
 {
-    private static readonly ILogger Log = Serilog.Log.ForContext(typeof(PlayersState));
+    public List<Player> Players { get; } = [];
 
-    public static List<Player> Players { get; } = [];
+    public Player? GetPlayerById(string id) => Players.FirstOrDefault(p => p.Id == id);
 
-    public static Player? GetPlayerById(string id) => Players.FirstOrDefault(p => p.Id == id);
-
-    public static Player AddPlayer(string id, string? nickname)
+    public Player AddPlayer(string id, string? nickname)
     {
-        Log.Information("Adding player with id {Id} and nickname {Nickname}", id, nickname);
+        logger.LogInformation("Adding player with id {Id} and nickname {Nickname}", id, nickname);
 
         var player = new Player(nickname ?? NicknameGenerator.Generate(), id);
         Players.Add(player);
@@ -22,13 +20,13 @@ public static class PlayersState
         return player;
     }
 
-    public static void RemovePlayer(Player player)
+    public void RemovePlayer(Player player)
     {
-        Log.Information("Removing player with id {Id}", player.Id);
+        logger.LogInformation("Removing player with id {Id}", player.Id);
         Players.Remove(player);
     }
 
-    public static bool IsEveryoneReady() => Players.All(p => p.IsReady);
+    public bool IsEveryoneReady() => Players.All(p => p.IsReady);
 
-    public static void Reset() => Players.Clear();
+    public void Reset() => Players.Clear();
 }
