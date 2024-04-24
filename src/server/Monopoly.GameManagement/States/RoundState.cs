@@ -10,7 +10,7 @@ public class RoundState(PlayersState playersState, ILogger<RoundState> logger)
 
     public bool IsOver() => Round.CurrentRound >= MaxRounds;
 
-    public void NextPlayer()
+    private void NextPlayer()
     {
         if (Round.CurrentPlayerIndex >= playersState.Players.Count - 1)
         {
@@ -27,9 +27,15 @@ public class RoundState(PlayersState playersState, ILogger<RoundState> logger)
         }
     }
 
+    public void EndTurn()
+    {
+        NextRound();
+        NextPlayer();
+    }
+
     public void ResetPlayer() => Round.ResetPlayer();
 
-    public void NextRound() => Round.NextRound();
+    private void NextRound() => Round.NextRound();
 
     public void ResetRound() => Round.ResetRound();
 

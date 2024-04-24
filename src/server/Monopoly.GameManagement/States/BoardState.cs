@@ -10,15 +10,15 @@ public class BoardState
     public const int GoMoney = 200;
     public List<Field> Fields { get; set; } = [];
 
-    public static int MovePlayer(Player player, int steps)
+    public void MovePlayer(Player player, int steps)
     {
         player.Position += steps;
-        if (player.Position >= TotalFields)
+        if (player.Position < TotalFields)
         {
-            player.Position -= TotalFields;
-            player.Money += GoMoney;
+            return;
         }
 
-        return player.Position;
+        player.Position -= TotalFields;
+        player.Money += GoMoney;
     }
 }

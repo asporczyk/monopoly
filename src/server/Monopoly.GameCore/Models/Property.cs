@@ -95,7 +95,7 @@ public class Property
         HasHotel = true;
     }
 
-    public void PayRent(Player player)
+    public void PayRent(Player player, Player owner)
     {
         if (OwnerId == null)
         {
@@ -121,5 +121,6 @@ public class Property
         }
 
         player.Money -= rent;
+        owner.Money += rent;
     }
 }

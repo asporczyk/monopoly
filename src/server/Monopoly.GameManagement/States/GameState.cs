@@ -17,16 +17,19 @@ public class GameState(
 
     public void Reset()
     {
-        logger.LogInformation("Resetting game state");
+        logger.LogInformation("Resetting game state...");
+
         Game.Reset();
         roundState.ResetRound();
     }
 
     public void StartGame()
     {
-        logger.LogInformation("Starting game");
+        logger.LogInformation("Starting game...");
+
         Game.Start();
         roundState.ResetRound();
+        roundState.ResetPlayer();
         boardState.Fields = FieldsGenerator.GenerateGameFields();
     }
 }
