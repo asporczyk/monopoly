@@ -5,13 +5,13 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      name: 'start',
-      component: () => import('@/views/Start.vue'),
+      name: 'menu',
+      component: () => import('@/views/MainMenu.vue'),
     },
     {
       path: '/game',
       name: 'game',
-      component: () => import('@/views/Game.vue'),
+      component: () => import('@/views/Game/Game.vue'),
     },
   ],
 })

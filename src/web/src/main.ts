@@ -12,6 +12,7 @@ import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 import { createVueI18nAdapter } from 'vuetify/locale/adapters/vue-i18n'
 import { aliases, mdi } from 'vuetify/iconsets/mdi'
+import '@mdi/font/css/materialdesignicons.css'
 
 export const i18n = createI18n({
   legacy: false,
