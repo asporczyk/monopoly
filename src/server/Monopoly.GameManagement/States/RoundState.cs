@@ -5,12 +5,12 @@ namespace Monopoly.GameManagement.States;
 
 public class RoundState(PlayersState playersState, ILogger<RoundState> logger)
 {
-    private const int MaxRounds = 40;
+    private const int MaxRounds = 20;
     private Round Round { get; set; } = new();
 
     public bool IsOver() => Round.CurrentRound >= MaxRounds;
 
-    private void NextPlayer()
+    public void NextTurn()
     {
         if (Round.CurrentPlayerIndex >= playersState.Players.Count - 1)
         {
@@ -27,15 +27,7 @@ public class RoundState(PlayersState playersState, ILogger<RoundState> logger)
         }
     }
 
-    public void EndTurn()
-    {
-        NextRound();
-        NextPlayer();
-    }
-
     public void ResetPlayer() => Round.ResetPlayer();
-
-    private void NextRound() => Round.NextRound();
 
     public void ResetRound() => Round.ResetRound();
 

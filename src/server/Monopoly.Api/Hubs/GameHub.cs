@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.SignalR;
+using Monopoly.GameCore.Models;
 using Monopoly.GameLogic.Services;
 using Monopoly.GameManagement.States;
 
@@ -29,12 +30,12 @@ internal sealed class GameHub(
         await base.OnDisconnectedAsync(exception);
     }
 
-    public async Task JoinGame(string nickname)
+    public async Task JoinGame(string? nickname)
     {
         var id = Context.ConnectionId;
-        var player = playersState.AddPlayer(id, nickname);
+        playersState.AddPlayer(id, nickname);
 
-        await Clients.All.SendAsync("PlayerJoined", player);
+        await Clients.All.SendAsync("PlayerJoined", playersState.Players);
     }
 
     public async Task Ready()
@@ -71,8 +72,8 @@ internal sealed class GameHub(
 
     public async Task MovePlayer(int steps)
     {
-        var player = playersState.GetPlayerById(Context.ConnectionId);
-        if (player is not null && player.Id == gameState.GetCurrentPlayerId())
+        var player = ValidateCurrentPlayer(Context.ConnectionId);
+        if (player is not null)
         {
             boardState.MovePlayer(player, steps);
 
@@ -89,13 +90,14 @@ internal sealed class GameHub(
             var property = boardState.Fields[player.Position].Property;
             if (property is null)
             {
+                // TODO: Chance or Community Chest
                 await Clients.Client(player.Id).SendAsync("SpecialFields", "TODO: Chance or Community Chest");
                 return;
             }
 
             if (property.OwnerId is null)
             {
-                await Clients.Client(player.Id).SendAsync("BuyField", property.Name);
+                await Clients.Client(player.Id).SendAsync("CanBuyField", property.Name);
                 return;
             }
 
@@ -110,29 +112,79 @@ internal sealed class GameHub(
         }
     }
 
+    public async Task BuyField()
+    {
+        var player = ValidateCurrentPlayer(Context.ConnectionId);
+        if (player is not null)
+        {
+            var property = boardState.Fields[player.Position].Property;
+            if (property is not null)
+            {
+                var fieldBought = property.Buy(player);
+
+                if (fieldBought)
+                {
+                    await Clients.All.SendAsync("FieldBought", player.Nickname, property.Name);
+                }
+            }
+        }
+    }
+
+    public async Task PayBail()
+    {
+        var player = ValidateCurrentPlayer(Context.ConnectionId);
+        if (player is not null)
+        {
+            JailService.PayBail(player);
+
+            await Clients.All.SendAsync("PlayerLeftJail", player.Nickname);
+        }
+    }
+
+    public async Task LeaveJail()
+    {
+        var player = ValidateCurrentPlayer(Context.ConnectionId);
+        if (player is not null)
+        {
+            JailService.LeaveJail(player);
+
+            await Clients.All.SendAsync("PlayerLeftJail", player.Nickname);
+        }
+    }
+
     public async Task EndTurn()
     {
-        var player = playersState.GetPlayerById(Context.ConnectionId);
-        if (player is not null && player.Id == gameState.GetCurrentPlayerId())
+        var player = ValidateCurrentPlayer(Context.ConnectionId);
+        if (player is not null)
         {
-            #region TODO: Verify this logic
-
             if (player is { IsInJail: true })
             {
                 player.JailTurns--;
+                if (player.JailTurns == 0)
+                {
+                    JailService.LeaveJail(player);
+                    await Clients.All.SendAsync("PlayerLeftJail", player.Nickname);
+                }
             }
 
-            #endregion
+            roundState.NextTurn();
 
-            roundState.EndTurn();
-
+            // TODO: Maybe print the player who is next
             await Clients.All.SendAsync("NextPlayer");
             await Clients.Client(gameState.GetCurrentPlayerId()).SendAsync("YourTurn");
         }
     }
 
-    // TODO: BuyField
+    private Player? ValidateCurrentPlayer(string connectionId)
+    {
+        var player = playersState.GetPlayerById(connectionId);
+        if (player is not null && player.Id == gameState.GetCurrentPlayerId())
+        {
+            return player;
+        }
+
+        return null;
+    }
+
     // TODO: SpecialFields
-    // TODO: ExitJail
-    // TODO: PayJail
 }

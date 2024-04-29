@@ -10,14 +10,17 @@ public class PlayersState(ILogger<PlayersState> logger)
 
     public Player? GetPlayerById(string id) => Players.FirstOrDefault(p => p.Id == id);
 
-    public Player AddPlayer(string id, string? nickname)
+    public void AddPlayer(string id, string? nickname)
     {
         logger.LogInformation("Adding player with id {Id} and nickname {Nickname}", id, nickname);
 
-        var player = new Player(nickname ?? NicknameGenerator.Generate(), id);
-        Players.Add(player);
+        if (string.IsNullOrWhiteSpace(nickname))
+        {
+            nickname = NicknameGenerator.Generate();
+        }
 
-        return player;
+        var player = new Player(nickname, id);
+        Players.Add(player);
     }
 
     public void RemovePlayer(Player player)
