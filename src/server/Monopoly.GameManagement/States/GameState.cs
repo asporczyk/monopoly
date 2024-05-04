@@ -1,26 +1,35 @@
+using Microsoft.Extensions.Logging;
 using Monopoly.GameCore.Models;
 using Monopoly.GameLogic.Generators;
-using Serilog;
 
 namespace Monopoly.GameManagement.States;
 
-public static class GameState
+public class GameState(
+    RoundState roundState,
+    BoardState boardState,
+    PlayersState playersState,
+    ILogger<GameState> logger
+)
 {
-    private static readonly ILogger Log = Serilog.Log.ForContext(typeof(GameState));
-    public static Game Game { get; } = new();
+    public Game Game { get; } = new();
 
-    public static void Reset()
+    public string GetCurrentPlayerId() => playersState.Players[roundState.GetCurrentPlayerIndex()].Id;
+
+    public void Reset()
     {
-        Log.Information("Resetting game state");
+        logger.LogInformation("Resetting game state...");
+
         Game.Reset();
-        RoundState.ResetRound();
+        roundState.ResetRound();
     }
 
-    public static void StartGame()
+    public void StartGame()
     {
-        Log.Information("Starting game");
+        logger.LogInformation("Starting game...");
+
         Game.Start();
-        RoundState.ResetRound();
-        BoardState.Fields = FieldsGenerator.GenerateGameFields();
+        roundState.ResetRound();
+        roundState.ResetPlayer();
+        boardState.Fields = FieldsGenerator.GenerateGameFields();
     }
 }

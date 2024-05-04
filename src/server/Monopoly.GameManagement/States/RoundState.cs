@@ -1,41 +1,37 @@
+using Microsoft.Extensions.Logging;
 using Monopoly.GameCore.Models;
-using Serilog;
 
 namespace Monopoly.GameManagement.States;
 
-public static class RoundState
+public class RoundState(PlayersState playersState, ILogger<RoundState> logger)
 {
-    private static readonly ILogger Log = Serilog.Log.ForContext(typeof(RoundState));
+    private const int MaxRounds = 20;
+    private Round Round { get; set; } = new();
 
-    private const int MaxRounds = 40;
-    private static Round Round { get; set; } = new();
+    public bool IsOver() => Round.CurrentRound >= MaxRounds;
 
-    public static bool IsOver() => Round.CurrentRound >= MaxRounds;
-
-    public static void NextPlayer()
+    public void NextTurn()
     {
-        if (Round.CurrentPlayer >= PlayersState.Players.Count - 1)
+        if (Round.CurrentPlayerIndex >= playersState.Players.Count - 1)
         {
             Round.ResetPlayer();
             Round.NextRound();
 
-            Log.Information("Next round");
+            logger.LogInformation("Next round");
         }
         else
         {
             Round.NextPlayer();
 
-            Log.Information("Next player");
+            logger.LogInformation("Next player");
         }
     }
 
-    public static void ResetPlayer() => Round.ResetPlayer();
+    public void ResetPlayer() => Round.ResetPlayer();
 
-    public static void NextRound() => Round.NextRound();
+    public void ResetRound() => Round.ResetRound();
 
-    public static void ResetRound() => Round.ResetRound();
+    public int GetCurrentRound() => Round.CurrentRound;
 
-    public static int GetCurrentRound() => Round.CurrentRound;
-
-    public static int GetCurrentPlayer() => Round.CurrentPlayer;
+    public int GetCurrentPlayerIndex() => Round.CurrentPlayerIndex;
 }

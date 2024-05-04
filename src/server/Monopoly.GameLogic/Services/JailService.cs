@@ -19,11 +19,6 @@ public static class JailService
         player.JailTurns = 0;
     }
 
-    public static void StayInJail(Player player)
-    {
-        player.JailTurns--;
-    }
-
     public static void PayBail(Player player)
     {
         player.Money -= JailBail;
