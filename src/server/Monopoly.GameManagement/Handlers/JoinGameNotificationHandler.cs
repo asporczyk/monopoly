@@ -28,10 +28,11 @@ internal class JoinGameNotificationHandler(
         var nickname = string.IsNullOrWhiteSpace(notification.Nickname)
             ? NicknameGenerator.Generate()
             : notification.Nickname;
+        var id = notification.ConnectionId;
 
-        playersState.AddPlayer(new Player(nickname, notification.ConnectionId));
+        playersState.AddPlayer(new Player(nickname, id));
 
-        logger.LogInformation("Player {Nickname} joined the game", nickname);
+        logger.LogInformation("Player {Id} - {Nickname} joined the game", id, nickname);
         await hub.NotifyAllPlayers("PlayerJoined", new { playersState.Players }, cancellationToken);
     }
 }

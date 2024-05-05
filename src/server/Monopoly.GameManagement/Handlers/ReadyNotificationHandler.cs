@@ -6,7 +6,7 @@ using Monopoly.GameManagement.States;
 
 namespace Monopoly.GameManagement.Handlers;
 
-public class ReadyNotificationHandler(
+internal class ReadyNotificationHandler(
     PlayersState playersState,
     IGameHubService hub,
     ILogger<ReadyNotificationHandler> logger
@@ -23,6 +23,7 @@ public class ReadyNotificationHandler(
 
         player.IsReady = true;
 
+        logger.LogInformation("Player {Id} is ready", player.Id);
         await hub.NotifyAllPlayers("PlayerReady", new { player.Nickname }, cancellationToken);
     }
 }

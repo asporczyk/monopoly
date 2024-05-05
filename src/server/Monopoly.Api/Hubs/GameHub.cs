@@ -39,26 +39,8 @@ internal sealed class GameHub(
     public async Task Ready()
         => await mediator.Publish(new ReadyNotification(Context.ConnectionId));
 
-    public async Task StartGame()
-    {
-        if (!playersState.IsEveryoneReady())
-        {
-            await Clients.Caller.SendAsync("NotEveryoneReady");
-            return;
-        }
-
-        if (gameState.Game.IsRunning)
-        {
-            await Clients.Caller.SendAsync("GameAlreadyStarted");
-            return;
-        }
-
-        gameState.StartGame();
-        var currentPlayerId = gameState.GetCurrentPlayerId();
-
-        await Clients.All.SendAsync("GameStarted");
-        await Clients.Client(currentPlayerId).SendAsync("YourTurn");
-    }
+    public async Task StartGame() =>
+        await mediator.Publish(new StartGameNotification(Context.ConnectionId));
 
     public async Task MovePlayer(int steps)
     {
