@@ -1,18 +1,19 @@
 using MediatR;
 using Microsoft.Extensions.Logging;
+using Monopoly.GameLogic.Services;
 using Monopoly.GameManagement.Abstract;
 using Monopoly.GameManagement.Notifications;
 using Monopoly.GameManagement.States;
 
 namespace Monopoly.GameManagement.Handlers;
 
-internal class ReadyNotificationHandler(
+public class PayBailNotificationHandler(
     PlayersState playersState,
     IGameHubService hub,
-    ILogger<ReadyNotificationHandler> logger
-) : INotificationHandler<ReadyNotification>
+    ILogger<PayBailNotificationHandler> logger
+) : INotificationHandler<PayBailNotification>
 {
-    public async Task Handle(ReadyNotification notification, CancellationToken cancellationToken)
+    public async Task Handle(PayBailNotification notification, CancellationToken cancellationToken)
     {
         var player = playersState.GetPlayerById(notification.ConnectionId);
         if (player is null)
@@ -21,9 +22,8 @@ internal class ReadyNotificationHandler(
             return;
         }
 
-        player.IsReady = true;
-
-        logger.LogInformation("Player {Id} - {Nickname} is ready", player.Id, player.Nickname);
-        await hub.NotifyAllPlayers("PlayerReady", new { player.Id }, cancellationToken);
+        JailService.PayBail(player);
+        logger.LogInformation("{Id} - {Nickname} paid bail", player.Id, player.Nickname);
+        await hub.NotifyAllPlayers("PlayerLeftJail", new { player.Id }, cancellationToken);
     }
 }

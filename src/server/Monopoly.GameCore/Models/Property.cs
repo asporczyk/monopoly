@@ -77,21 +77,9 @@ public class Property
         HasHotel = true;
     }
 
-    public void PayRent(Player player, Player owner)
+    // TODO: Change logic for calculating rent
+    public int GetRentToPay()
     {
-        if (OwnerId is null)
-        {
-            Log.Information("Property {Name} is not owned", Name);
-            return;
-        }
-
-        if (OwnerId == player.Id)
-        {
-            Log.Information("Player {PlayerId} owns {Name}", player.Id, Name);
-            return;
-        }
-
-        // TODO: Change logic for houses and hotels
         var rent = Rent;
         if (Houses > 0)
         {
@@ -102,7 +90,6 @@ public class Property
             rent = HotelCost;
         }
 
-        player.Money -= rent;
-        owner.Money += rent;
+        return rent;
     }
 }
