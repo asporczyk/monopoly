@@ -11,7 +11,6 @@ internal sealed class GameHub(
     GameState gameState,
     PlayersState playersState,
     BoardState boardState,
-    RoundState roundState,
     IMediator mediator
 ) : Hub
 {
@@ -78,23 +77,8 @@ internal sealed class GameHub(
         }
     }
 
-    public async Task BuyField()
-    {
-        var player = ValidateCurrentPlayer(Context.ConnectionId);
-        if (player is not null)
-        {
-            var property = boardState.Fields[player.Position].Property;
-            if (property is not null)
-            {
-                var fieldBought = property.Buy(player);
-
-                if (fieldBought)
-                {
-                    await Clients.All.SendAsync("FieldBought", player.Nickname, property.Name);
-                }
-            }
-        }
-    }
+    public async Task BuyField() =>
+        await mediator.Publish(new BuyFieldNotification(Context.ConnectionId));
 
     public async Task PayBail()
     {
@@ -118,28 +102,8 @@ internal sealed class GameHub(
         }
     }
 
-    public async Task EndTurn()
-    {
-        var player = ValidateCurrentPlayer(Context.ConnectionId);
-        if (player is not null)
-        {
-            if (player is { IsInJail: true })
-            {
-                player.JailTurns--;
-                if (player.JailTurns == 0)
-                {
-                    JailService.LeaveJail(player);
-                    await Clients.All.SendAsync("PlayerLeftJail", player.Nickname);
-                }
-            }
-
-            roundState.NextTurn();
-
-            // TODO: Maybe print the player who is next
-            await Clients.All.SendAsync("NextPlayer");
-            await Clients.Client(gameState.GetCurrentPlayerId()).SendAsync("YourTurn");
-        }
-    }
+    public async Task EndTurn() =>
+        await mediator.Publish(new EndTurnNotification(Context.ConnectionId));
 
     private Player? ValidateCurrentPlayer(string connectionId)
     {

@@ -13,26 +13,7 @@ public class Property
     public int HotelCost { get; init; }
     public int Houses { get; set; }
     public bool HasHotel { get; private set; }
-    public string? OwnerId { get; private set; }
-
-    public bool Buy(Player player)
-    {
-        if (OwnerId != null)
-        {
-            Log.Information("Property {Name} is already owned by {OwnerId}", Name, OwnerId);
-            return false;
-        }
-
-        if (player.Money < Price)
-        {
-            Log.Information("Player {PlayerId} does not have enough money to buy {Name}", player.Id, Name);
-            return false;
-        }
-
-        player.Money -= Price;
-        OwnerId = player.Id;
-        return true;
-    }
+    public string? OwnerId { get; set; }
 
     public void Sell(Player player)
     {
@@ -98,7 +79,7 @@ public class Property
 
     public void PayRent(Player player, Player owner)
     {
-        if (OwnerId == null)
+        if (OwnerId is null)
         {
             Log.Information("Property {Name} is not owned", Name);
             return;
