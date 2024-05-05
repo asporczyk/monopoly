@@ -23,13 +23,7 @@ internal sealed class GameHub(
 
     public override async Task OnDisconnectedAsync(Exception? exception)
     {
-        var player = playersState.GetPlayerById(Context.ConnectionId);
-        if (player is not null)
-        {
-            await Clients.All.SendAsync("PlayerLeft", player.Nickname);
-            playersState.RemovePlayer(player);
-        }
-
+        await mediator.Publish(new PlayerLeftNotification(Context.ConnectionId));
         await base.OnDisconnectedAsync(exception);
     }
 

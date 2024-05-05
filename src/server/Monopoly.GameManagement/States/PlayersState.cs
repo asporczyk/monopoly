@@ -1,9 +1,8 @@
-using Microsoft.Extensions.Logging;
 using Monopoly.GameCore.Models;
 
 namespace Monopoly.GameManagement.States;
 
-public class PlayersState(ILogger<PlayersState> logger)
+public class PlayersState
 {
     public List<Player> Players { get; } = [];
 
@@ -11,11 +10,7 @@ public class PlayersState(ILogger<PlayersState> logger)
 
     public void AddPlayer(Player player) => Players.Add(player);
 
-    public void RemovePlayer(Player player)
-    {
-        logger.LogInformation("Removing player with id {Id}", player.Id);
-        Players.Remove(player);
-    }
+    public void RemovePlayer(Player player) => Players.Remove(player);
 
     public bool IsEveryoneReady() => Players.All(p => p.IsReady);
 
