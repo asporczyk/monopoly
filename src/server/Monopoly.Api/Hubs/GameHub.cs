@@ -1,6 +1,8 @@
+using MediatR;
 using Microsoft.AspNetCore.SignalR;
 using Monopoly.GameCore.Models;
 using Monopoly.GameLogic.Services;
+using Monopoly.GameManagement.Notifications;
 using Monopoly.GameManagement.States;
 
 namespace Monopoly.Api.Hubs;
@@ -9,7 +11,8 @@ internal sealed class GameHub(
     GameState gameState,
     PlayersState playersState,
     BoardState boardState,
-    RoundState roundState
+    RoundState roundState,
+    IMediator mediator
 ) : Hub
 {
     public override async Task OnConnectedAsync()
@@ -30,24 +33,11 @@ internal sealed class GameHub(
         await base.OnDisconnectedAsync(exception);
     }
 
-    public async Task JoinGame(string? nickname)
-    {
-        var id = Context.ConnectionId;
-        playersState.AddPlayer(id, nickname);
-
-        await Clients.All.SendAsync("PlayerJoined", playersState.Players);
-    }
+    public async Task JoinGame(string? nickname) =>
+        await mediator.Publish(new JoinGameNotification(Context.ConnectionId, nickname));
 
     public async Task Ready()
-    {
-        var player = playersState.GetPlayerById(Context.ConnectionId);
-        if (player is not null)
-        {
-            player.IsReady = true;
-
-            await Clients.All.SendAsync("PlayerReady", player.Nickname);
-        }
-    }
+        => await mediator.Publish(new ReadyNotification(Context.ConnectionId));
 
     public async Task StartGame()
     {
