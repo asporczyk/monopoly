@@ -15,6 +15,8 @@ public class GameState(
 
     public string GetCurrentPlayerId() => playersState.Players[roundState.GetCurrentPlayerIndex()].Id;
 
+    public Player GetCurrentPlayer() => playersState.Players[roundState.GetCurrentPlayerIndex()];
+
     public void Reset()
     {
         logger.LogInformation("Resetting game state...");

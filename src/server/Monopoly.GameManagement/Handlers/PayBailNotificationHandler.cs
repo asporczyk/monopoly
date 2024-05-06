@@ -8,21 +8,22 @@ using Monopoly.GameManagement.States;
 namespace Monopoly.GameManagement.Handlers;
 
 public class PayBailNotificationHandler(
-    PlayersState playersState,
+    GameState gameState,
     IGameHubService hub,
     ILogger<PayBailNotificationHandler> logger
 ) : INotificationHandler<PayBailNotification>
 {
     public async Task Handle(PayBailNotification notification, CancellationToken cancellationToken)
     {
-        var player = playersState.GetPlayerById(notification.ConnectionId);
-        if (player is null)
+        var player = gameState.GetCurrentPlayer();
+        if (player.Id != notification.ConnectionId)
         {
-            logger.LogWarning("Player with connection id {ConnectionId} not found", notification.ConnectionId);
+            logger.LogWarning("Player {Id} - {Nickname} is not the current player", player.Id, player.Nickname);
             return;
         }
 
         JailService.PayBail(player);
+
         logger.LogInformation("{Id} - {Nickname} paid bail", player.Id, player.Nickname);
         await hub.NotifyAllPlayers("PlayerLeftJail", new { player.Id }, cancellationToken);
     }

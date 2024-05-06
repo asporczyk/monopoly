@@ -16,7 +16,8 @@ internal class JoinGameNotificationHandler(
 {
     public async Task Handle(JoinGameNotification notification, CancellationToken cancellationToken)
     {
-        if (playersState.GetPlayerById(notification.ConnectionId) is not null)
+        var player = playersState.GetPlayerById(notification.ConnectionId);
+        if (player is not null)
         {
             logger.LogWarning(
                 "Player with connection id {ConnectionId} already joined the game",

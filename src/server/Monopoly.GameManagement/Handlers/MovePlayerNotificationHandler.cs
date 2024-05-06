@@ -9,6 +9,7 @@ using Monopoly.GameManagement.States;
 namespace Monopoly.GameManagement.Handlers;
 
 public class MovePlayerNotificationHandler(
+    GameState gameState,
     PlayersState playersState,
     BoardState boardState,
     IGameHubService hub,
@@ -17,10 +18,10 @@ public class MovePlayerNotificationHandler(
 {
     public async Task Handle(MovePlayerNotification notification, CancellationToken cancellationToken)
     {
-        var player = playersState.GetPlayerById(notification.ConnectionId);
-        if (player is null)
+        var player = gameState.GetCurrentPlayer();
+        if (player.Id != notification.ConnectionId)
         {
-            logger.LogWarning("Player with connection id {ConnectionId} not found", notification.ConnectionId);
+            logger.LogWarning("Player {Id} - {Nickname} is not the current player", player.Id, player.Nickname);
             return;
         }
 

@@ -42,13 +42,9 @@ internal sealed class GameHub(IPublisher mediator) : Hub
     public async Task LeaveJail() =>
         await mediator.Publish(new LeaveJailNotification(Context.ConnectionId));
 
-    public async Task CommunityChestField()
-    {
-        throw new NotImplementedException();
-    }
+    public async Task CommunityChestField() =>
+        await mediator.Publish(new CommunityChestFieldNotification(Context.ConnectionId));
 
-    public async Task ChanceField()
-    {
-        throw new NotImplementedException();
-    }
+    public async Task ChanceField() =>
+        await mediator.Publish(new ChanceFieldNotification(Context.ConnectionId));
 }

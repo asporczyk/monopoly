@@ -9,25 +9,28 @@ using Serilog;
 namespace Monopoly.GameManagement.Handlers;
 
 internal class BuyFieldNotificationHandler(
-    PlayersState playersState,
     BoardState boardState,
+    GameState gameState,
     IGameHubService hub,
     ILogger<BuyFieldNotificationHandler> logger
 ) : INotificationHandler<BuyFieldNotification>
 {
     public async Task Handle(BuyFieldNotification notification, CancellationToken cancellationToken)
     {
-        var player = playersState.GetPlayerById(notification.ConnectionId);
-        if (player is null)
+        var player = gameState.GetCurrentPlayer();
+        if (player.Id != notification.ConnectionId)
         {
-            logger.LogWarning("Player with connection id {ConnectionId} not found", notification.ConnectionId);
+            logger.LogWarning("Player {Id} - {Nickname} is not the current player", player.Id, player.Nickname);
             return;
         }
 
         var property = boardState.Fields[player.Position].Property;
         if (property is null)
         {
-            logger.LogWarning("Player {Nickname} landed on a field without property", player.Nickname);
+            logger.LogWarning("Player {Id} - {Nickname} landed on a field without property",
+                player.Id,
+                player.Nickname
+            );
             return;
         }
 

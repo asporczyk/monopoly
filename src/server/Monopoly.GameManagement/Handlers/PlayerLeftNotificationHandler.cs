@@ -23,7 +23,7 @@ internal class PlayerLeftNotificationHandler(
 
         playersState.RemovePlayer(player);
 
-        logger.LogInformation("Player {Id} left the game", player.Id);
+        logger.LogInformation("Player {Id} - {Nickname} left the game", player.Id, player.Nickname);
         await hub.NotifyAllPlayers("PlayerLeft", new { player.Id }, cancellationToken);
     }
 }
