@@ -1,33 +1,16 @@
-using Microsoft.Extensions.Logging;
 using Monopoly.GameCore.Models;
-using Monopoly.GameLogic.Helpers;
 
 namespace Monopoly.GameManagement.States;
 
-public class PlayersState(ILogger<PlayersState> logger)
+public class PlayersState
 {
     public List<Player> Players { get; } = [];
 
     public Player? GetPlayerById(string id) => Players.FirstOrDefault(p => p.Id == id);
 
-    public void AddPlayer(string id, string? nickname)
-    {
-        logger.LogInformation("Adding player with id {Id} and nickname {Nickname}", id, nickname);
+    public void AddPlayer(Player player) => Players.Add(player);
 
-        if (string.IsNullOrWhiteSpace(nickname))
-        {
-            nickname = NicknameGenerator.Generate();
-        }
-
-        var player = new Player(nickname, id);
-        Players.Add(player);
-    }
-
-    public void RemovePlayer(Player player)
-    {
-        logger.LogInformation("Removing player with id {Id}", player.Id);
-        Players.Remove(player);
-    }
+    public void RemovePlayer(Player player) => Players.Remove(player);
 
     public bool IsEveryoneReady() => Players.All(p => p.IsReady);
 

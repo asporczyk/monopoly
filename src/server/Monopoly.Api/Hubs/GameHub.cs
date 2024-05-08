@@ -1,16 +1,10 @@
+using MediatR;
 using Microsoft.AspNetCore.SignalR;
-using Monopoly.GameCore.Models;
-using Monopoly.GameLogic.Services;
-using Monopoly.GameManagement.States;
+using Monopoly.GameManagement.Notifications;
 
 namespace Monopoly.Api.Hubs;
 
-internal sealed class GameHub(
-    GameState gameState,
-    PlayersState playersState,
-    BoardState boardState,
-    RoundState roundState
-) : Hub
+internal sealed class GameHub(IPublisher mediator) : Hub
 {
     public override async Task OnConnectedAsync()
     {
@@ -20,171 +14,41 @@ internal sealed class GameHub(
 
     public override async Task OnDisconnectedAsync(Exception? exception)
     {
-        var player = playersState.GetPlayerById(Context.ConnectionId);
-        if (player is not null)
-        {
-            await Clients.All.SendAsync("PlayerLeft", player.Nickname);
-            playersState.RemovePlayer(player);
-        }
-
+        await mediator.Publish(new PlayerLeftNotification(Context.ConnectionId));
         await base.OnDisconnectedAsync(exception);
     }
 
-    public async Task JoinGame(string? nickname)
-    {
-        var id = Context.ConnectionId;
-        playersState.AddPlayer(id, nickname);
-
-        await Clients.All.SendAsync("PlayerJoined", playersState.Players);
-    }
+    public async Task JoinGame(string? nickname) =>
+        await mediator.Publish(new JoinGameNotification(Context.ConnectionId, nickname));
 
     public async Task Ready()
-    {
-        var player = playersState.GetPlayerById(Context.ConnectionId);
-        if (player is not null)
-        {
-            player.IsReady = true;
+        => await mediator.Publish(new ReadyNotification(Context.ConnectionId));
 
-            await Clients.All.SendAsync("PlayerReady", player.Nickname);
-        }
-    }
-
-    public async Task StartGame()
-    {
-        if (!playersState.IsEveryoneReady())
-        {
-            await Clients.Caller.SendAsync("NotEveryoneReady");
-            return;
-        }
-
-        if (gameState.Game.IsRunning)
-        {
-            await Clients.Caller.SendAsync("GameAlreadyStarted");
-            return;
-        }
-
-        gameState.StartGame();
-        var currentPlayerId = gameState.GetCurrentPlayerId();
-
-        await Clients.All.SendAsync("GameStarted");
-        await Clients.Client(currentPlayerId).SendAsync("YourTurn");
-    }
+    public async Task StartGame() =>
+        await mediator.Publish(new StartGameNotification(Context.ConnectionId));
 
     public async Task MovePlayer(int steps)
-    {
-        var player = ValidateCurrentPlayer(Context.ConnectionId);
-        if (player is not null)
-        {
-            boardState.MovePlayer(player, steps);
+        => await mediator.Publish(new MovePlayerNotification(Context.ConnectionId, steps));
 
-            await Clients.All.SendAsync("PlayerMoved", player.Nickname, steps);
+    public async Task BuyField() =>
+        await mediator.Publish(new BuyFieldNotification(Context.ConnectionId));
 
-            if (player.Position == BoardState.JailPosition)
-            {
-                JailService.GoToJail(player);
+    public async Task EndTurn() =>
+        await mediator.Publish(new EndTurnNotification(Context.ConnectionId));
 
-                await Clients.All.SendAsync("PlayerInJail", player.Nickname);
-                return;
-            }
+    public async Task PayBail() =>
+        await mediator.Publish(new PayBailNotification(Context.ConnectionId));
 
-            var property = boardState.Fields[player.Position].Property;
-            if (property is null)
-            {
-                // TODO: Chance or Community Chest
-                await Clients.Client(player.Id).SendAsync("SpecialFields", "TODO: Chance or Community Chest");
-                return;
-            }
+    public async Task LeaveJail() =>
+        await mediator.Publish(new LeaveJailNotification(Context.ConnectionId));
 
-            if (property.OwnerId is null)
-            {
-                await Clients.Client(player.Id).SendAsync("CanBuyField", property.Name);
-                return;
-            }
+    // TODO: Buy houses
+    // TODO: Buy hotels
+    // TODO: Sell houses
 
-            var owner = playersState.GetPlayerById(property.OwnerId);
-            if (owner is not null)
-            {
-                property.PayRent(player, owner);
+    public async Task CommunityChestField() =>
+        await mediator.Publish(new CommunityChestFieldNotification(Context.ConnectionId));
 
-                await Clients.Client(player.Id).SendAsync("PayRent", owner.Nickname, property.Rent);
-                await Clients.Client(owner.Id).SendAsync("ReceiveRent", player.Nickname, property.Rent);
-            }
-        }
-    }
-
-    public async Task BuyField()
-    {
-        var player = ValidateCurrentPlayer(Context.ConnectionId);
-        if (player is not null)
-        {
-            var property = boardState.Fields[player.Position].Property;
-            if (property is not null)
-            {
-                var fieldBought = property.Buy(player);
-
-                if (fieldBought)
-                {
-                    await Clients.All.SendAsync("FieldBought", player.Nickname, property.Name);
-                }
-            }
-        }
-    }
-
-    public async Task PayBail()
-    {
-        var player = ValidateCurrentPlayer(Context.ConnectionId);
-        if (player is not null)
-        {
-            JailService.PayBail(player);
-
-            await Clients.All.SendAsync("PlayerLeftJail", player.Nickname);
-        }
-    }
-
-    public async Task LeaveJail()
-    {
-        var player = ValidateCurrentPlayer(Context.ConnectionId);
-        if (player is not null)
-        {
-            JailService.LeaveJail(player);
-
-            await Clients.All.SendAsync("PlayerLeftJail", player.Nickname);
-        }
-    }
-
-    public async Task EndTurn()
-    {
-        var player = ValidateCurrentPlayer(Context.ConnectionId);
-        if (player is not null)
-        {
-            if (player is { IsInJail: true })
-            {
-                player.JailTurns--;
-                if (player.JailTurns == 0)
-                {
-                    JailService.LeaveJail(player);
-                    await Clients.All.SendAsync("PlayerLeftJail", player.Nickname);
-                }
-            }
-
-            roundState.NextTurn();
-
-            // TODO: Maybe print the player who is next
-            await Clients.All.SendAsync("NextPlayer");
-            await Clients.Client(gameState.GetCurrentPlayerId()).SendAsync("YourTurn");
-        }
-    }
-
-    private Player? ValidateCurrentPlayer(string connectionId)
-    {
-        var player = playersState.GetPlayerById(connectionId);
-        if (player is not null && player.Id == gameState.GetCurrentPlayerId())
-        {
-            return player;
-        }
-
-        return null;
-    }
-
-    // TODO: SpecialFields
+    public async Task ChanceField() =>
+        await mediator.Publish(new ChanceFieldNotification(Context.ConnectionId));
 }

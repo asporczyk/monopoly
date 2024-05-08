@@ -16,10 +16,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="Models\" />
-    </ItemGroup>
-
-    <ItemGroup>
         <ProjectReference Include="..\Monopoly.GameManagement\Monopoly.GameManagement.csproj" />
     </ItemGroup>
 

@@ -11,9 +11,12 @@ public class GameState(
     ILogger<GameState> logger
 )
 {
+    // TODO: Endgame logic, print player with most money
     public Game Game { get; } = new();
 
     public string GetCurrentPlayerId() => playersState.Players[roundState.GetCurrentPlayerIndex()].Id;
+
+    public Player GetCurrentPlayer() => playersState.Players[roundState.GetCurrentPlayerIndex()];
 
     public void Reset()
     {

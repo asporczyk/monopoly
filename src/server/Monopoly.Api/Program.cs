@@ -1,15 +1,20 @@
 using Monopoly.Api.Hubs;
+using Monopoly.Api.Services;
+using Monopoly.GameManagement.Abstract;
 using Monopoly.GameManagement.States;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
 Log.Logger = new LoggerConfiguration()
-    .MinimumLevel.Debug()
+    .MinimumLevel.Information()
     .WriteTo.Console()
     .CreateLogger();
 
 builder.Host.UseSerilog();
+
+builder.Services.AddMediatR(x => x.RegisterServicesFromAssemblyContaining<IGameHubService>());
+builder.Services.AddScoped<IGameHubService, GameHubService>();
 
 builder.Services.AddSingleton<BoardState>();
 builder.Services.AddSingleton<GameState>();
