@@ -1,5 +1,6 @@
 using MediatR;
 using Microsoft.Extensions.Logging;
+using Monopoly.GameCore.Dictionary;
 using Monopoly.GameCore.Models;
 using Monopoly.GameLogic.Services;
 using Monopoly.GameManagement.Abstract;
@@ -28,27 +29,66 @@ public class MovePlayerNotificationHandler(
         boardState.MovePlayer(player, notification.Steps);
         await hub.NotifyAllPlayers("PlayerMoved", new { player.Id, notification.Steps }, cancellationToken);
 
-        if (player.Position is BoardState.JailPosition)
+        var field = boardState.GetField(player.Position);
+        if (field is null)
         {
-            JailService.GoToJail(player);
-
-            logger.LogInformation("Player {Id} - {Nickname} go to jail", player.Id, player.Nickname);
-            await hub.NotifyAllPlayers("PlayerGoToJail", player.Id, cancellationToken);
+            logger.LogWarning("Field with position {Position} not found", player.Position);
             return;
         }
 
-        var property = boardState.Fields[player.Position].Property;
-        switch (property)
+        switch (field)
         {
-            case null:
-                // TODO: Implement SPECIAL FIELDS
-                await hub.NotifyPlayer(player.Id, "SpecialFields", "Chance/Community Chest", cancellationToken);
+            case { Property: not null }:
+                await HandlePropertyField(player, field.Property, cancellationToken);
                 break;
+            case { SpecialField: not null }:
+                await HandleSpecialField(player, (SpecialFields)field.SpecialField, cancellationToken);
+                break;
+        }
+    }
+
+    private async Task HandleSpecialField(Player player, SpecialFields fieldSpecialField, CancellationToken cancellationToken = default)
+    {
+        switch (fieldSpecialField)
+        {
+            case SpecialFields.Go:
+                break;
+            case SpecialFields.GoToJail:
+                JailService.GoToJail(player);
+
+                logger.LogInformation("Player {Id} - {Nickname} go to jail", player.Id, player.Nickname);
+                await hub.NotifyAllPlayers("PlayerGoToJail", player.Id, cancellationToken);
+                break;
+            case SpecialFields.JailVisit:
+                break;
+            case SpecialFields.CommunityChest:
+                break;
+            case SpecialFields.Chance:
+                break;
+            case SpecialFields.IncomeTax:
+                const int incomeTax = 200;
+
+                player.Money -= incomeTax;
+
+                logger.LogInformation("Player {Id} - {Nickname} pay income tax", player.Id, player.Nickname);
+                await hub.NotifyPlayer(player.Id, "PayIncomeTax", incomeTax, cancellationToken);
+                break;
+            case SpecialFields.FreeParking:
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(fieldSpecialField), fieldSpecialField, "Special field not implemented");
+        }
+    }
+
+    private async Task HandlePropertyField(Player player, Property fieldProperty, CancellationToken cancellationToken = default)
+    {
+        switch (fieldProperty)
+        {
             case { OwnerId: null }:
-                await hub.NotifyPlayer(player.Id, "CanBuyField", new { property.Name }, cancellationToken);
+                await hub.NotifyPlayer(player.Id, "CanBuyField", new { fieldProperty.Name }, cancellationToken);
                 break;
-            case { OwnerId: { } ownerId } when ownerId != player.Id:
-                await PayRent(player, property);
+            default:
+                await PayRent(player, fieldProperty);
                 break;
         }
     }

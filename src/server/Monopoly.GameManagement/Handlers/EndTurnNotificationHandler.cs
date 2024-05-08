@@ -35,12 +35,28 @@ public class EndTurnNotificationHandler(
             }
         }
 
+        var round = roundState.GetCurrentRound();
         roundState.NextTurn();
-        // TODO: Send round number
+
+        if (roundState.IsGameOver())
+        {
+            var winnerId = gameState.GetWinner();
+            await hub.NotifyAllPlayers("Winner", winnerId, cancellationToken);
+            logger.LogInformation("Game over, winner is {Id}", winnerId);
+            gameState.Reset();
+            return;
+        }
+
+        var nextRound = roundState.GetCurrentRound();
+        if (nextRound != round)
+        {
+            await hub.NotifyAllPlayers("NextRound", nextRound, cancellationToken);
+        }
 
         logger.LogInformation("Player {Id} - {Nickname} ended turn", player.Id, player.Nickname);
-        // TODO: Maybe print the player who is next
-        await hub.NotifyAllPlayers("NextPlayer", cancellationToken);
-        await hub.NotifyPlayer(gameState.GetCurrentPlayerId(), "YourTurn", cancellationToken);
+
+        var currentPlayerId = gameState.GetCurrentPlayerId();
+        await hub.NotifyAllPlayers("NextPlayer", currentPlayerId, cancellationToken);
+        await hub.NotifyPlayer(currentPlayerId, "YourTurn", cancellationToken);
     }
 }

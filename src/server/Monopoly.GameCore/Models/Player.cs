@@ -21,8 +21,4 @@ public class Player(string nickname, string id)
 
     // TODO: Check if player is bankrupt
     // TODO: Method to subtract money and add money (calculate if player is bankrupt)
-    // public bool IsInGame { get; set; }
-    // public bool IsTurn { get; set; }
-    // public bool IsWinner { get; set; }
-    // public bool IsLoser { get; set; }
 }

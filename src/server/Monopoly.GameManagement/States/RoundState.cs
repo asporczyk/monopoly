@@ -8,9 +8,8 @@ public class RoundState(PlayersState playersState, ILogger<RoundState> logger)
     private const int MaxRounds = 20;
     private Round Round { get; set; } = new();
 
-    public bool IsOver() => Round.CurrentRound >= MaxRounds;
+    public bool IsGameOver() => Round.CurrentRound >= MaxRounds;
 
-    // TODO: Check is game over
     public void NextTurn()
     {
         if (Round.CurrentPlayerIndex >= playersState.Players.Count - 1)
