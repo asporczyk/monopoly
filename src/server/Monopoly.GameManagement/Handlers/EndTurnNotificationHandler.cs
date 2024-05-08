@@ -36,6 +36,7 @@ public class EndTurnNotificationHandler(
         }
 
         roundState.NextTurn();
+        // TODO: Send round number
 
         logger.LogInformation("Player {Id} - {Nickname} ended turn", player.Id, player.Nickname);
         // TODO: Maybe print the player who is next

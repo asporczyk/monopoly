@@ -42,6 +42,10 @@ internal sealed class GameHub(IPublisher mediator) : Hub
     public async Task LeaveJail() =>
         await mediator.Publish(new LeaveJailNotification(Context.ConnectionId));
 
+    // TODO: Buy houses
+    // TODO: Buy hotels
+    // TODO: Sell houses
+
     public async Task CommunityChestField() =>
         await mediator.Publish(new CommunityChestFieldNotification(Context.ConnectionId));
 
