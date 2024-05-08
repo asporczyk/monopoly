@@ -19,9 +19,15 @@ public static class JailService
         player.JailTurns = 0;
     }
 
-    public static void PayBail(Player player)
+    public static bool PayBail(Player player)
     {
+        if (player.Money < JailBail)
+        {
+            return false;
+        }
+
         player.Money -= JailBail;
         LeaveJail(player);
+        return true;
     }
 }

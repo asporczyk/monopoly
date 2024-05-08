@@ -103,6 +103,16 @@ public class MovePlayerNotificationHandler(
         }
 
         var rent = property.GetRentToPay();
+        if (player.Money < rent)
+        {
+            owner.Money += player.Money;
+            // TODO: Rest player bankrupt actions
+            player.IsBankrupt = true;
+
+            logger.LogInformation("Player {Id} - {Nickname} is bankrupt", player.Id, player.Nickname);
+            await hub.NotifyAllPlayers("PlayerBankrupt", player.Id);
+            return;
+        }
 
         player.Money -= rent;
         owner.Money += rent;

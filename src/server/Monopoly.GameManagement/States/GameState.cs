@@ -25,6 +25,9 @@ public class GameState(
         roundState.ResetRound();
     }
 
+    // TODO: At start create players order, if player is bankrupt remove from order
+    // TODO: If player is bankrupt remove his cards
+    // TODO: Use Order list to get next player, order can be listed players ids
     public void StartGame()
     {
         logger.LogInformation("Starting game...");

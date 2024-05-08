@@ -10,6 +10,7 @@ public class RoundState(PlayersState playersState, ILogger<RoundState> logger)
 
     public bool IsGameOver() => Round.CurrentRound >= MaxRounds;
 
+    // TODO: Get next player that is not bankrupt
     public void NextTurn()
     {
         if (Round.CurrentPlayerIndex >= playersState.Players.Count - 1)

@@ -22,7 +22,12 @@ public class PayBailNotificationHandler(
             return;
         }
 
-        JailService.PayBail(player);
+        var isBailPayed = JailService.PayBail(player);
+        if (!isBailPayed)
+        {
+            logger.LogWarning("Player {Id} - {Nickname} does not have enough money to pay bail", player.Id, player.Nickname);
+            return;
+        }
 
         logger.LogInformation("{Id} - {Nickname} paid bail", player.Id, player.Nickname);
         await hub.NotifyAllPlayers("PlayerLeftJail", new { player.Id }, cancellationToken);

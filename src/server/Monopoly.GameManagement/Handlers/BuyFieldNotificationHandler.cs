@@ -35,7 +35,8 @@ internal class BuyFieldNotificationHandler(
         }
 
 
-        if (!BuyProperty(property, player))
+        var isPropertyBought = BuyProperty(property, player);
+        if (!isPropertyBought)
         {
             return;
         }
