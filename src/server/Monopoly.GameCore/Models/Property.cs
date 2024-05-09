@@ -12,7 +12,7 @@ public class Property
     public int HouseCost { get; init; }
     public int HotelCost { get; init; }
     public int Houses { get; set; }
-    public bool HasHotel { get; private set; }
+    public bool HasHotel { get; set; }
     public string? OwnerId { get; set; }
 
     public void Sell(Player player)

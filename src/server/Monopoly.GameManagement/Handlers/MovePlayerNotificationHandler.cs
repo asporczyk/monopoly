@@ -13,6 +13,7 @@ public class MovePlayerNotificationHandler(
     GameState gameState,
     PlayersState playersState,
     BoardState boardState,
+    RoundState roundState,
     IGameHubService hub,
     ILogger<MovePlayerNotificationHandler> logger
 ) : INotificationHandler<MovePlayerNotification>
@@ -88,12 +89,12 @@ public class MovePlayerNotificationHandler(
                 await hub.NotifyPlayer(player.Id, "CanBuyField", new { fieldProperty.Name }, cancellationToken);
                 break;
             default:
-                await PayRent(player, fieldProperty);
+                await PayRent(player, fieldProperty, cancellationToken);
                 break;
         }
     }
 
-    private async Task PayRent(Player player, Property property)
+    private async Task PayRent(Player player, Property property, CancellationToken cancellationToken = default)
     {
         var owner = playersState.GetPlayerById(property.OwnerId ?? string.Empty);
         if (owner is null)
@@ -105,12 +106,7 @@ public class MovePlayerNotificationHandler(
         var rent = property.GetRentToPay();
         if (player.Money < rent)
         {
-            owner.Money += player.Money;
-            // TODO: Rest player bankrupt actions
-            player.IsBankrupt = true;
-
-            logger.LogInformation("Player {Id} - {Nickname} is bankrupt", player.Id, player.Nickname);
-            await hub.NotifyAllPlayers("PlayerBankrupt", player.Id);
+            await HandleBankrupt(player, owner, cancellationToken);
             return;
         }
 
@@ -119,7 +115,26 @@ public class MovePlayerNotificationHandler(
 
         logger.LogInformation("Player {Id} - {Nickname} pay rent {Rent} to {OwnerId} - {OwnerNickname}", player.Id,
             player.Nickname, rent, owner.Id, owner.Nickname);
-        await hub.NotifyPlayer(player.Id, "PayRent", new { owner.Nickname, rent });
-        await hub.NotifyPlayer(owner.Id, "ReceiveRent", new { player.Nickname, rent });
+
+        await hub.NotifyPlayer(player.Id, "PayRent", new { owner.Nickname, rent }, cancellationToken);
+        await hub.NotifyPlayer(owner.Id, "ReceiveRent", new { player.Nickname, rent }, cancellationToken);
+    }
+
+    private async Task HandleBankrupt(Player player, Player owner, CancellationToken cancellationToken = default)
+    {
+        var rent = player.Money;
+
+        owner.Money += rent;
+        roundState.BankruptPlayer(player);
+        boardState.RemovePlayerCards(player.Id);
+
+        logger.LogInformation("Player {Id} - {Nickname} is bankrupt", player.Id, player.Nickname);
+        var currentPlayerId = gameState.GetCurrentPlayerId();
+
+        await hub.NotifyPlayer(currentPlayerId, "YourTurn", cancellationToken);
+        await hub.NotifyAllPlayers("NextPlayer", currentPlayerId, cancellationToken);
+
+        await hub.NotifyPlayer(owner.Id, "ReceiveRent", new { player.Nickname, rent }, cancellationToken);
+        await hub.NotifyAllPlayers("PlayerBankrupt", player.Id, cancellationToken);
     }
 }

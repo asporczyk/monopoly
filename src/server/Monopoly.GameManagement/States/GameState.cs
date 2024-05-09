@@ -13,26 +13,24 @@ public class GameState(
 {
     public Game Game { get; } = new();
 
-    public string GetCurrentPlayerId() => playersState.Players[roundState.GetCurrentPlayerIndex()].Id;
+    public string GetCurrentPlayerId() => roundState.PlayersOrder[roundState.GetCurrentOrderIndex()];
 
-    public Player GetCurrentPlayer() => playersState.Players[roundState.GetCurrentPlayerIndex()];
+    public Player GetCurrentPlayer() => playersState.Players.First(p => p.Id == GetCurrentPlayerId());
 
     public void Reset()
     {
         logger.LogInformation("Resetting game state...");
-
+        roundState.GeneratePlayersOrder();
         Game.Reset();
         roundState.ResetRound();
     }
 
-    // TODO: At start create players order, if player is bankrupt remove from order
-    // TODO: If player is bankrupt remove his cards
-    // TODO: Use Order list to get next player, order can be listed players ids
     public void StartGame()
     {
         logger.LogInformation("Starting game...");
 
         Game.Start();
+        roundState.GeneratePlayersOrder();
         roundState.ResetRound();
         roundState.ResetPlayer();
         boardState.Fields = FieldsGenerator.GenerateGameFields();

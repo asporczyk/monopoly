@@ -22,4 +22,19 @@ public class BoardState
     }
 
     public Field? GetField(int position) => Fields.FirstOrDefault(f => f.Position == position);
+
+    public void RemovePlayerCards(string playerId)
+    {
+        foreach (var field in Fields)
+        {
+            if (field.Property is null || field.Property.OwnerId != playerId)
+            {
+                continue;
+            }
+
+            field.Property.OwnerId = null;
+            field.Property.Houses = 0;
+            field.Property.HasHotel = false;
+        }
+    }
 }
