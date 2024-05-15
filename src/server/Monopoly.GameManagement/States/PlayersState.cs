@@ -6,7 +6,6 @@ public class PlayersState
 {
     public List<Player> Players { get; } = [];
 
-
     public Player? GetPlayerById(string id) => Players.FirstOrDefault(p => p.Id == id);
 
     public void AddPlayer(Player player) => Players.Add(player);
