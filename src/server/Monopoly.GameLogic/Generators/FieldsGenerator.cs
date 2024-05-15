@@ -167,7 +167,7 @@ public static class FieldsGenerator
         new Field
         {
             Position = 39,
-            Property = new Property { Name = "Mayfair", Price = 400, Rent = 50, HouseCost = 200, HotelCost = 200 }
+            Property = new Property { Name = "Mayfair", Price = 400, Rent = 50, HouseCost = 200, HotelCost = 400 }
         }
     ];
 }

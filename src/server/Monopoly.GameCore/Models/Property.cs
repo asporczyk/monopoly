@@ -77,19 +77,18 @@ public class Property
         HasHotel = true;
     }
 
-    // TODO: Change logic for calculating rent
-    public int GetRentToPay()
+    public int CalculateRentToPay()
     {
-        var rent = Rent;
-        if (Houses > 0)
+        if (HasHotel)
         {
-            rent *= Houses;
-        }
-        else if (HasHotel)
-        {
-            rent = HotelCost;
+            return HotelCost;
         }
 
-        return rent;
+        if (Houses > 0)
+        {
+            return Rent * Houses;
+        }
+
+        return Rent;
     }
 }

@@ -103,7 +103,7 @@ public class MovePlayerNotificationHandler(
             return;
         }
 
-        var rent = property.GetRentToPay();
+        var rent = property.CalculateRentToPay();
         if (player.Money < rent)
         {
             await HandleBankrupt(player, owner, cancellationToken);
