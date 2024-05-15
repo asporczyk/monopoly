@@ -6,14 +6,14 @@ using Monopoly.GameManagement.States;
 
 namespace Monopoly.GameManagement.Handlers;
 
-public class BuyHouseNotificationHandler(
+public class BuyHotelNotificationHandler(
     GameState gameState,
     BoardState boardState,
     IGameHubService hub,
-    ILogger<BuyHouseNotificationHandler> logger
-) : INotificationHandler<BuyHouseNotification>
+    ILogger<BuyHotelNotificationHandler> logger
+) : INotificationHandler<BuyHotelNotification>
 {
-    public async Task Handle(BuyHouseNotification notification, CancellationToken cancellationToken)
+    public async Task Handle(BuyHotelNotification notification, CancellationToken cancellationToken)
     {
         var player = gameState.GetCurrentPlayer();
         if (player.Id != notification.ConnectionId)
@@ -41,21 +41,28 @@ public class BuyHouseNotificationHandler(
             return;
         }
 
-        if (field.Property.Houses == 4)
+        if (field.Property.HasHotel)
         {
-            logger.LogWarning("Field with position {Position} already has 5 houses", player.Position);
+            logger.LogWarning("Field with position {Position} already has hotel", player.Position);
             return;
         }
 
-        if (player.Money < field.Property.HouseCost)
+        if (field.Property.Houses != 4)
+        {
+            logger.LogWarning("Field with position {Position} has not 4 houses", player.Position);
+            return;
+        }
+
+        if (player.Money < field.Property.HotelCost)
         {
             logger.LogWarning("Player {Id} - {Nickname} has not enough money to buy a house", player.Id, player.Nickname);
             return;
         }
 
-        player.Money -= field.Property.HouseCost;
-        field.Property.Houses++;
+        player.Money -= field.Property.HotelCost;
+        field.Property.HasHotel = true;
+        field.Property.Houses = 0;
 
-        await hub.NotifyAllPlayers("HouseBought", new { player.Id, field.Property, field.Property.Houses }, cancellationToken);
+        await hub.NotifyAllPlayers("HotelBought", new { player.Id, field.Property, field.Property.Houses }, cancellationToken);
     }
 }
