@@ -22,7 +22,6 @@ const { rollDice } = useRollDice()
 const handleRollDice = () => {
   currentDiceRoll.value[0] = rollDice()
   currentDiceRoll.value[1] = rollDice()
-  console.log(currentDiceRoll.value)
   openModal.value = true
   gameStore.saveDiceRoll(currentDiceRoll.value)
 }
