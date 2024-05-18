@@ -4,4 +4,5 @@ interface Player {
   bank: number
   color: string
   position: number
+  isActivePlayer?: boolean
 }

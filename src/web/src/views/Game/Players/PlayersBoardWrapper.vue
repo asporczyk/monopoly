@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Player from '@/views/Game/Player.vue'
+import Player from '@/views/Game/Players/Player.vue'
 import { useGameStore } from '@/stores/game'
 import { storeToRefs } from 'pinia'
 
