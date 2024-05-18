@@ -4,10 +4,9 @@ namespace Monopoly.GameManagement.States;
 
 public class BoardState
 {
-    public const int TotalFields = 40;
-    public const int JailPosition = 10;
+    private const int TotalFields = 40;
+    private const int GoMoney = 200;
     public const int GoPosition = 0;
-    public const int GoMoney = 200;
     public List<Field> Fields { get; set; } = [];
 
     public void MovePlayer(Player player, int steps)
@@ -20,5 +19,22 @@ public class BoardState
 
         player.Position -= TotalFields;
         player.Money += GoMoney;
+    }
+
+    public Field? GetField(int position) => Fields.FirstOrDefault(f => f.Position == position);
+
+    public void RemovePlayerCards(string playerId)
+    {
+        foreach (var field in Fields)
+        {
+            if (field.Property is null || field.Property.OwnerId != playerId)
+            {
+                continue;
+            }
+
+            field.Property.OwnerId = null;
+            field.Property.Houses = 0;
+            field.Property.HasHotel = false;
+        }
     }
 }

@@ -11,17 +11,16 @@ public class GameState(
     ILogger<GameState> logger
 )
 {
-    // TODO: Endgame logic, print player with most money
     public Game Game { get; } = new();
 
-    public string GetCurrentPlayerId() => playersState.Players[roundState.GetCurrentPlayerIndex()].Id;
+    public string GetCurrentPlayerId() => roundState.PlayersOrder[roundState.GetCurrentOrderIndex()];
 
-    public Player GetCurrentPlayer() => playersState.Players[roundState.GetCurrentPlayerIndex()];
+    public Player GetCurrentPlayer() => playersState.Players.First(p => p.Id == GetCurrentPlayerId());
 
     public void Reset()
     {
         logger.LogInformation("Resetting game state...");
-
+        roundState.GeneratePlayersOrder();
         Game.Reset();
         roundState.ResetRound();
     }
@@ -31,8 +30,11 @@ public class GameState(
         logger.LogInformation("Starting game...");
 
         Game.Start();
+        roundState.GeneratePlayersOrder();
         roundState.ResetRound();
         roundState.ResetPlayer();
         boardState.Fields = FieldsGenerator.GenerateGameFields();
     }
+
+    public string GetWinner() => playersState.Players.OrderByDescending(p => p.Money).First().Id;
 }

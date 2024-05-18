@@ -1,4 +1,5 @@
 using Monopoly.GameCore.Models;
+using static Monopoly.GameCore.Dictionary.SpecialFields;
 
 namespace Monopoly.GameLogic.Generators;
 
@@ -6,19 +7,19 @@ public static class FieldsGenerator
 {
     public static List<Field> GenerateGameFields() =>
     [
-        new Field { Position = 0, Property = null }, // START
+        new Field { Position = 0, SpecialField = Go }, // START
         new Field
         {
             Position = 1,
             Property = new Property { Name = "Old Kent Road", Price = 60, Rent = 2, HouseCost = 50, HotelCost = 50 }
         },
-        new Field { Position = 2, Property = null }, // Community Chest
+        new Field { Position = 2, SpecialField = CommunityChest }, // Community Chest
         new Field
         {
             Position = 3,
             Property = new Property { Name = "Whitechapel Road", Price = 60, Rent = 4, HouseCost = 50, HotelCost = 50 }
         },
-        new Field { Position = 4, Property = null }, // Income Tax
+        new Field { Position = 4, SpecialField = IncomeTax }, // Income Tax
         new Field
         {
             Position = 5,
@@ -31,7 +32,7 @@ public static class FieldsGenerator
             Property = new Property
                 { Name = "The Angel Islington", Price = 100, Rent = 6, HouseCost = 50, HotelCost = 50 }
         },
-        new Field { Position = 7, Property = null }, // Chance
+        new Field { Position = 7, SpecialField = Chance }, // Chance
         new Field
         {
             Position = 8,
@@ -42,7 +43,7 @@ public static class FieldsGenerator
             Position = 9,
             Property = new Property { Name = "Pentonville Road", Price = 120, Rent = 8, HouseCost = 50, HotelCost = 50 }
         },
-        new Field { Position = 10, Property = null }, // Jail/Just Visiting
+        new Field { Position = 10, SpecialField = JailVisit }, // Jail/Just Visiting
         new Field
         {
             Position = 11,
@@ -75,7 +76,7 @@ public static class FieldsGenerator
             Position = 16,
             Property = new Property { Name = "Bow Street", Price = 180, Rent = 14, HouseCost = 100, HotelCost = 100 }
         },
-        new Field { Position = 17, Property = null }, // Community Chest
+        new Field { Position = 17, SpecialField = CommunityChest }, // Community Chest
         new Field
         {
             Position = 18,
@@ -87,13 +88,13 @@ public static class FieldsGenerator
             Position = 19,
             Property = new Property { Name = "Vine Street", Price = 200, Rent = 16, HouseCost = 100, HotelCost = 100 }
         },
-        new Field { Position = 20, Property = null }, // Free Parking
+        new Field { Position = 20, SpecialField = FreeParking }, // Free Parking
         new Field
         {
             Position = 21,
             Property = new Property { Name = "Strand", Price = 220, Rent = 18, HouseCost = 150, HotelCost = 150 }
         },
-        new Field { Position = 22, Property = null }, // Chance
+        new Field { Position = 22, SpecialField = Chance }, // Chance
         new Field
         {
             Position = 23,
@@ -133,7 +134,7 @@ public static class FieldsGenerator
             Position = 29,
             Property = new Property { Name = "Piccadilly", Price = 280, Rent = 24, HouseCost = 150, HotelCost = 150 }
         },
-        new Field { Position = 30, Property = null }, // Go To Jail
+        new Field { Position = 30, SpecialField = GoToJail }, // Go To Jail
         new Field
         {
             Position = 31,
@@ -144,7 +145,7 @@ public static class FieldsGenerator
             Position = 32,
             Property = new Property { Name = "Oxford Street", Price = 300, Rent = 26, HouseCost = 200, HotelCost = 200 }
         },
-        new Field { Position = 33, Property = null }, // Community Chest
+        new Field { Position = 33, SpecialField = CommunityChest }, // Community Chest
         new Field
         {
             Position = 34,
@@ -156,17 +157,17 @@ public static class FieldsGenerator
             Property = new Property
                 { Name = "Liverpool St Station", Price = 200, Rent = 25, HouseCost = 0, HotelCost = 0 }
         },
-        new Field { Position = 36, Property = null }, // Chance
+        new Field { Position = 36, SpecialField = Chance }, // Chance
         new Field
         {
             Position = 37,
             Property = new Property { Name = "Park Lane", Price = 350, Rent = 35, HouseCost = 200, HotelCost = 200 }
         },
-        new Field { Position = 38, Property = null }, // Super Tax
+        new Field { Position = 38, SpecialField = IncomeTax }, // Super Tax
         new Field
         {
             Position = 39,
-            Property = new Property { Name = "Mayfair", Price = 400, Rent = 50, HouseCost = 200, HotelCost = 200 }
+            Property = new Property { Name = "Mayfair", Price = 400, Rent = 50, HouseCost = 200, HotelCost = 400 }
         }
     ];
 }
