@@ -63,6 +63,6 @@ public class BuyHotelNotificationHandler(
         field.Property.HasHotel = true;
         field.Property.Houses = 0;
 
-        await hub.NotifyAllPlayers("HotelBought", new { player.Id, field.Property, field.Property.Houses }, cancellationToken);
+        await hub.NotifyAllPlayers("HotelBought", new { player.Id, field.Property.Name, field.Property.HasHotel }, cancellationToken);
     }
 }
