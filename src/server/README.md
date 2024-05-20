@@ -1,10 +1,17 @@
-# Serwer zaplecza Monopoly
+# Backend Monopoly
 
-To jest serwer zaplecza do gry Monopoly. Napisany jest w .NET 8 i korzysta z funkcji minimalnego API dla implementacji serwera. Serwer wykorzystuje także SignalR do komunikacji z graczami.
+To jest backend do gry Monopoly. Napisany w .NET 8, wykorzystuje funkcje minimalnego API do implementacji serwera oraz SignalR do
+komunikacji z graczami.
+
+## Spis treści
+
+1. [Pierwsze kroki](#pierwsze-kroki)
+2. [Funkcje](#funkcje)
+3. [Zapytania i odpowiedzi](#zapytania-i-odpowiedzi)
 
 ## Pierwsze kroki
 
-Aby rozpocząć pracę z serwerem zaplecza Monopoly, wykonaj następujące kroki:
+Aby rozpocząć pracę z backendem Monopoly, wykonaj następujące kroki:
 
 1. Sklonuj repozytorium: `git clone https://github.com/asporczyk/monopoly`
 2. Przejdź do katalogu serwera: `cd monopoly/src/server`
@@ -17,3 +24,252 @@ Aby rozpocząć pracę z serwerem zaplecza Monopoly, wykonaj następujące kroki
 - Implementacja minimalnego API dla lekkiej i efektywnej obsługi serwera.
 - Integracja z SignalR umożliwiająca komunikację w czasie rzeczywistym z graczami.
 - Obsługa i serwowanie logiki gry Monopoly.
+
+## Zapytania i odpowiedzi
+
+Caller — klient, który wywołuje metodę na serwerze.
+All — wszyscy klienci połączeni z serwerem.
+Player — wskazany przez grę gracz.
+---
+*Nazwa metody* -> **kto otrzymuje odpowiedź**
+
+```json
+{
+  "parametr": "typ"
+}
+```
+
+---
+
+### OnConnectedAsync
+
+*Automatyczna metoda wywoływana przy połączeniu klienta z serwerem.*
+Zwracane odpowiedzi:
+
+- *ReceiveConnectionId* -> **Caller**
+    ```plaintext
+    string
+    ```
+
+---
+
+### OnDisconnectedAsync
+
+Zwracane odpowiedzi:
+
+- *PlayerLeft* -> **All**
+
+  ```json 
+  {
+    "id": "PlayerID"
+  }
+  ```
+
+---
+
+### JoinGame
+
+Parametry:
+
+- `string? nickname`
+
+Zwracane odpowiedzi:
+
+- *PlayerJoined* -> **All**
+
+  ```json 
+  {
+    "players": [
+      {
+        "nickname": "PlayerOne",
+        "id": "12345",
+        "Money": 1500,
+        "Position": 0,
+        "IsInJail": false,
+        "JailTurns": 0,
+        "IsBankrupt": false,
+        "IsReady": false
+      },
+      ...
+    ]
+  }
+  ```
+
+---
+
+### Ready
+
+Zwracane odpowiedzi:
+
+- *PlayerReady* -> **All**
+
+  ```json 
+  {
+    "Id": "PlayerID"
+  }
+  ```
+
+---
+
+## StartGame
+
+Zwracane odpowiedzi:
+
+- *PlayersNotReady* -> **All**
+
+---
+
+- *GameAlreadyStarted* -> **All**
+
+---
+
+- *GameStarted* -> **All**
+
+---
+
+- *YourTurn* -> **Player**
+
+---
+
+### MovePlayer
+
+Parametry:
+
+- `int steps`
+
+Zwracane odpowiedzi:
+
+- *PlayerMoved* -> **All**
+
+  ```json 
+  {
+    "Id": "PlayerID",
+    "Steps": 5
+  }
+  ```
+
+---
+
+- *PlayerGoToJail* -> **All**
+
+  ```json 
+  {
+    "Id": "PlayerID"
+  }
+  ```
+
+---
+
+- *PayIncomeTax* -> **Player**
+
+  ```json 
+  {
+    "incomeTax": 123
+  }
+  ```
+
+---
+
+- *CanBuyField* -> **Player**
+
+  ```json 
+  {
+    "Name": "Wall Street"
+  }
+  ```
+
+---
+
+- *PayRent* -> **Player**
+
+  ```json 
+  {
+    "Nickname": "OwnerNickname",
+    "Rent": 123
+  }
+  ```
+
+---
+
+- *ReceiveRent* -> **Player**
+
+  ```json 
+  {
+    "Nickname": "PayedPlayerNickname",
+    "Rent": 123
+  }
+  ```
+
+---
+
+- *PlayerBankrupt* -> **All**
+
+  ```json 
+  {
+    "Id": "PlayerID"
+  }
+  ```
+
+---
+
+- *NextPlayer* -> **All**
+
+  ```json 
+  {
+    "currentPlayerId": "PlayerID"
+  }
+  ```
+
+---
+
+- *YourTurn* -> **Player**
+
+---
+
+### BuyField
+
+Zwracane odpowiedzi:
+
+- *do wypełnienia*
+
+### EndTurn
+
+Zwracane odpowiedzi:
+
+- *do wypełnienia*
+
+### PayBail
+
+Zwracane odpowiedzi:
+
+- *do wypełnienia*
+
+### LeaveJail
+
+Zwracane odpowiedzi:
+
+- *do wypełnienia*
+
+### BuyHouse
+
+Zwracane odpowiedzi:
+
+- *do wypełnienia*
+
+### BuyHotel
+
+Zwracane odpowiedzi:
+
+- *do wypełnienia*
+
+### CommunityChestField
+
+Zwracane odpowiedzi:
+
+- *do wypełnienia*
+
+### ChanceField
+
+Zwracane odpowiedzi:
+
+- *do wypełnienia*

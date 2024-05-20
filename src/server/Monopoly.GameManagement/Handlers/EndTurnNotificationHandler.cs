@@ -56,7 +56,7 @@ public class EndTurnNotificationHandler(
         logger.LogInformation("Player {Id} - {Nickname} ended turn", player.Id, player.Nickname);
 
         var currentPlayerId = gameState.GetCurrentPlayerId();
-        await hub.NotifyAllPlayers("NextPlayer", currentPlayerId, cancellationToken);
+        await hub.NotifyAllPlayers("NextPlayer", new { currentPlayerId }, cancellationToken);
         await hub.NotifyPlayer(currentPlayerId, "YourTurn", cancellationToken);
     }
 }

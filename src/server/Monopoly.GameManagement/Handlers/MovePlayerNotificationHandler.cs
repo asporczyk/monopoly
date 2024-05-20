@@ -58,7 +58,7 @@ public class MovePlayerNotificationHandler(
                 JailService.GoToJail(player);
 
                 logger.LogInformation("Player {Id} - {Nickname} go to jail", player.Id, player.Nickname);
-                await hub.NotifyAllPlayers("PlayerGoToJail", player.Id, cancellationToken);
+                await hub.NotifyAllPlayers("PlayerGoToJail", new { player.Id }, cancellationToken);
                 break;
             case SpecialFields.JailVisit:
                 break;
@@ -67,12 +67,13 @@ public class MovePlayerNotificationHandler(
             case SpecialFields.Chance:
                 break;
             case SpecialFields.IncomeTax:
+                // TODO: Handle bankrupt
                 const int incomeTax = 200;
 
                 player.Money -= incomeTax;
 
                 logger.LogInformation("Player {Id} - {Nickname} pay income tax", player.Id, player.Nickname);
-                await hub.NotifyPlayer(player.Id, "PayIncomeTax", incomeTax, cancellationToken);
+                await hub.NotifyPlayer(player.Id, "PayIncomeTax", new { incomeTax }, cancellationToken);
                 break;
             case SpecialFields.FreeParking:
                 break;
@@ -132,9 +133,9 @@ public class MovePlayerNotificationHandler(
         var currentPlayerId = gameState.GetCurrentPlayerId();
 
         await hub.NotifyPlayer(currentPlayerId, "YourTurn", cancellationToken);
-        await hub.NotifyAllPlayers("NextPlayer", currentPlayerId, cancellationToken);
+        await hub.NotifyAllPlayers("NextPlayer", new { currentPlayerId }, cancellationToken);
 
         await hub.NotifyPlayer(owner.Id, "ReceiveRent", new { player.Nickname, rent }, cancellationToken);
-        await hub.NotifyAllPlayers("PlayerBankrupt", player.Id, cancellationToken);
+        await hub.NotifyAllPlayers("PlayerBankrupt", new { player.Id }, cancellationToken);
     }
 }
