@@ -56,6 +56,6 @@ public class BuyHouseNotificationHandler(
         player.Money -= field.Property.HouseCost;
         field.Property.Houses++;
 
-        await hub.NotifyAllPlayers("HouseBought", new { player.Id, field.Property, field.Property.Houses }, cancellationToken);
+        await hub.NotifyAllPlayers("HouseBought", new { player.Id, field.Property.Name, field.Property.Houses }, cancellationToken);
     }
 }

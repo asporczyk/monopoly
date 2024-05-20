@@ -230,37 +230,128 @@ Zwracane odpowiedzi:
 
 Zwracane odpowiedzi:
 
-- *do wypełnienia*
+---
+
+- *FieldBought* -> **All**
+
+  ```json 
+  {
+    "Id": "PlayerID",
+    "Name": "Wall Street"
+  }
+  ```
+
+---
 
 ### EndTurn
 
 Zwracane odpowiedzi:
 
-- *do wypełnienia*
+---
+
+- *PlayerLeftJail* -> **All**
+
+  ```json 
+  {
+    "Id": "PlayerID"
+  }
+  ```
+
+---
+
+- *Winner* -> **All**
+
+  ```json 
+  {
+    "WinnerId": "PlayerID"
+  }
+  ```
+
+---
+
+- *NextRound* -> **All**
+
+  ```json 
+  {
+    "RoundNumber": 2
+  }
+  ```
+
+---
+
+- *NextPlayer* -> **All**
+
+  ```json 
+  {
+    "currentPlayerId": "PlayerID"
+  }
+  ```
+
+---
+
+- *YourTurn* -> **Player**
+
+---
 
 ### PayBail
 
 Zwracane odpowiedzi:
 
-- *do wypełnienia*
+- *PlayerLeftJail* -> **All**
+
+  ```json 
+  {
+    "Id": "PlayerID"
+  }
+  ```
+
+---
 
 ### LeaveJail
 
 Zwracane odpowiedzi:
 
-- *do wypełnienia*
+- *PlayerLeftJail* -> **All**
+
+  ```json 
+  {
+    "Id": "PlayerID"
+  }
+  ```
+
+---
 
 ### BuyHouse
 
 Zwracane odpowiedzi:
 
-- *do wypełnienia*
+- *HouseBought* -> **All**
+
+  ```json 
+  {
+    "Id": "PlayerID",
+    "Name": "Wall Street",
+    "Houses": 1
+  }
+  ```
+
+---
 
 ### BuyHotel
 
 Zwracane odpowiedzi:
 
-- *do wypełnienia*
+- *HotelBought* -> **All**
+
+  ```json 
+  {
+    "Id": "PlayerID",
+    "Name": "Wall Street",
+    "HasHotel": true
+  }
+  ```
+
+---
 
 ### CommunityChestField
 
