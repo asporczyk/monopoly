@@ -21,11 +21,13 @@ builder.Services.AddSingleton<GameState>();
 builder.Services.AddSingleton<PlayersState>();
 builder.Services.AddSingleton<RoundState>();
 
-
 builder.Services.AddSignalR();
+builder.Services.AddCors();
 
 var app = builder.Build();
 
 app.UseHttpsRedirection();
 app.MapHub<GameHub>("/game-hub");
+app.UseCors(policyBuilder => policyBuilder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+
 app.Run();
