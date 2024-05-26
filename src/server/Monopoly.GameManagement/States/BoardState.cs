@@ -1,3 +1,4 @@
+using Monopoly.GameCore.Dictionary;
 using Monopoly.GameCore.Models;
 
 namespace Monopoly.GameManagement.States;
@@ -9,16 +10,18 @@ public class BoardState
     public const int GoPosition = 0;
     public List<Field> Fields { get; set; } = [];
 
-    public void MovePlayer(Player player, int steps)
+    public PlayerMovedState MovePlayer(Player player, int steps)
     {
         player.Position += steps;
         if (player.Position < TotalFields)
         {
-            return;
+            return PlayerMovedState.Default;
         }
 
         player.Position -= TotalFields;
         player.Money += GoMoney;
+
+        return PlayerMovedState.MovedThroughGo;
     }
 
     public Field? GetField(int position) => Fields.FirstOrDefault(f => f.Position == position);

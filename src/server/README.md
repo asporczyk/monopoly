@@ -144,7 +144,7 @@ Zwracane odpowiedzi:
   ```json 
   {
     "Id": "PlayerID",
-    "Steps": 5
+    "playerPosition": 5
   }
   ```
 
@@ -174,7 +174,8 @@ Zwracane odpowiedzi:
 
   ```json 
   {
-    "Name": "Wall Street"
+    "Name": "Wall Street",
+    "Price": 123
   }
   ```
 
@@ -219,6 +220,19 @@ Zwracane odpowiedzi:
     "currentPlayerId": "PlayerID"
   }
   ```
+
+---
+
+- *PlayerMovedThroughGo* -> **All**
+
+  ```json 
+  {
+    "Id": "PlayerID",
+    "Money": 1500
+  }
+  ```
+
+---
 
 ---
 
@@ -360,7 +374,6 @@ Zwracane odpowiedzi:
 - *GameReset* -> **All**
 
 ---
-
 
 ### CommunityChestField
 
