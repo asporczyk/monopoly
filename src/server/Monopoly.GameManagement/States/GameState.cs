@@ -20,7 +20,8 @@ public class GameState(
     public void Reset()
     {
         logger.LogInformation("Resetting game state...");
-        roundState.GeneratePlayersOrder();
+        roundState.ClearPlayersOrder();
+        playersState.RemoveAllPlayers();
         Game.Reset();
         roundState.ResetRound();
     }

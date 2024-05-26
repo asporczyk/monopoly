@@ -353,6 +353,15 @@ Zwracane odpowiedzi:
 
 ---
 
+### ResetGame
+
+Zwracane odpowiedzi:
+
+- *GameReset* -> **All**
+
+---
+
+
 ### CommunityChestField
 
 Zwracane odpowiedzi:

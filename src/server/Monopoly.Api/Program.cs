@@ -28,5 +28,8 @@ var app = builder.Build();
 
 app.UseHttpsRedirection();
 app.MapHub<GameHub>("/game-hub");
-app.UseCors(policyBuilder => policyBuilder.WithOrigins("http://localhost:5173").AllowAnyHeader().AllowAnyMethod().AllowCredentials());
+app.UseCors(policyBuilder =>
+    policyBuilder.WithOrigins("http://localhost:5173").AllowAnyHeader().AllowAnyMethod().AllowCredentials()
+);
+
 app.Run();

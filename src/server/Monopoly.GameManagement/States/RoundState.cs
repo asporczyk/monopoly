@@ -43,6 +43,8 @@ public class RoundState(PlayersState playersState, ILogger<RoundState> logger)
         PlayersOrder.AddRange(playersState.Players.Select(p => p.Id));
     }
 
+    public void ClearPlayersOrder() => PlayersOrder.Clear();
+
     public void BankruptPlayer(Player player)
     {
         player.IsBankrupt = true;
