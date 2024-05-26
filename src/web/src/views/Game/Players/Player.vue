@@ -5,9 +5,11 @@ import { useI18n } from 'vue-i18n'
 import TextButton from '@/components/atoms/Buttons/TextButton.vue'
 import { ref } from 'vue'
 import CardsModal from '@/views/Game/Players/Cards/CardsModal.vue'
+import TextBody from '@/components/atoms/Typography/TextBody.vue'
 
 interface PlayerProps {
   player: Player
+  isInLobby?: boolean
 }
 
 defineProps<PlayerProps>()
@@ -19,22 +21,35 @@ const openCardsModal = ref(false)
 <template>
   <div class="d-flex flex-column align-center">
     <v-card
-      :color="player.color"
+      :color="player?.color ?? 'white'"
       width="120px"
       height="120px"
       class="d-flex align-center justify-center rounded"
     >
       <v-avatar
-        :image="`https://picsum.photos/80?random=${player.id}`"
+        v-if="player"
+        :image="`https://picsum.photos/80?random=${player?.id}`"
         size="100"
         rounded="0"
       />
+      <TextBody v-else>{{ t('empty') }}</TextBody>
     </v-card>
-    <HeadlineXS>{{ player.name }}</HeadlineXS>
-    <TextCaption>{{ t('bank', { amount: player.bank }) }}</TextCaption>
-    <TextButton v-if="player.isActivePlayer" @click="openCardsModal = true">{{
-      t('cards')
-    }}</TextButton>
+    <div class="d-flex flex-row align-center">
+      <HeadlineXS>{{ player?.nickname }}</HeadlineXS>
+      <v-icon
+        v-if="isInLobby && player?.isReady"
+        color="green"
+        icon="mdi-check"
+      />
+    </div>
+    <TextCaption v-if="!isInLobby">{{
+      t('bank', { amount: player?.money })
+    }}</TextCaption>
+    <TextButton
+      v-if="!isInLobby && player?.isActivePlayer"
+      @click="openCardsModal = true"
+      >{{ t('cards') }}</TextButton
+    >
   </div>
   <CardsModal v-model="openCardsModal" @close="openCardsModal = false" />
 </template>
@@ -42,11 +57,15 @@ const openCardsModal = ref(false)
 {
   "en": {
     "bank": "Bank: ${amount}",
-    "cards": "Cards"
+    "cards": "Cards",
+    "ready": "Ready",
+    "empty": "Empty"
   },
   "pl": {
     "bank": "Konto: ${amount}",
-    "cards": "Karty"
+    "cards": "Karty",
+    "ready": "Gotowy",
+    "empty": "Puste"
   }
 }
 </i18n>

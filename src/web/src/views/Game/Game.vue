@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import Board from '@/views/Game/Board.vue'
-import PlayersBoardWrapper from '@/views/Game/Players/PlayersBoardWrapper.vue'
+import PlayersWrapper from '@/views/Game/Players/PlayersWrapper.vue'
 import GameActions from '@/views/Game/GameActions.vue'
 </script>
 <template>
-  <PlayersBoardWrapper>
+  <PlayersWrapper>
     <Board />
-  </PlayersBoardWrapper>
+  </PlayersWrapper>
   <GameActions />
 </template>
