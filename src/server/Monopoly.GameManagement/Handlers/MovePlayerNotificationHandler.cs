@@ -27,13 +27,19 @@ public class MovePlayerNotificationHandler(
             return;
         }
 
-        boardState.MovePlayer(player, notification.Steps);
-        await hub.NotifyAllPlayers("PlayerMoved", new { player.Id, notification.Steps }, cancellationToken);
+        var state = boardState.MovePlayer(player, notification.Steps);
+        if (state.HasFlag(PlayerMovedState.MovedThroughGo))
+        {
+            await hub.NotifyAllPlayers("PlayerMovedThroughGo", new { player.Id, player.Money }, cancellationToken);
+        }
 
-        var field = boardState.GetField(player.Position);
+        var playerPosition = player.Position;
+        await hub.NotifyAllPlayers("PlayerMoved", new { player.Id, playerPosition }, cancellationToken);
+
+        var field = boardState.GetField(playerPosition);
         if (field is null)
         {
-            logger.LogWarning("Field with position {Position} not found", player.Position);
+            logger.LogWarning("Field with position {Position} not found", playerPosition);
             return;
         }
 
@@ -87,7 +93,7 @@ public class MovePlayerNotificationHandler(
         switch (fieldProperty)
         {
             case { OwnerId: null }:
-                await hub.NotifyPlayer(player.Id, "CanBuyField", new { fieldProperty.Name }, cancellationToken);
+                await hub.NotifyPlayer(player.Id, "CanBuyField", new { fieldProperty.Name, fieldProperty.Price }, cancellationToken);
                 break;
             default:
                 await PayRent(player, fieldProperty, cancellationToken);
