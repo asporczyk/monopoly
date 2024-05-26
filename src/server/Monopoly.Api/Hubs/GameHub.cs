@@ -53,4 +53,7 @@ internal sealed class GameHub(IPublisher mediator) : Hub
 
     public async Task ChanceField() =>
         await mediator.Publish(new ChanceFieldNotification(Context.ConnectionId));
+
+    public async Task ResetGame() =>
+        await mediator.Publish(new ResetGameNotification(Context.ConnectionId));
 }

@@ -13,4 +13,6 @@ public class PlayersState
     public void RemovePlayer(Player player) => Players.Remove(player);
 
     public bool IsEveryoneReady() => Players.All(p => p.IsReady);
+
+    public void RemoveAllPlayers() => Players.Clear();
 }
