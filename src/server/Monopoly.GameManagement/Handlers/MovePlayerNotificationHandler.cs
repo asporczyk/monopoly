@@ -79,7 +79,7 @@ public class MovePlayerNotificationHandler(
                 player.Money -= incomeTax;
 
                 logger.LogInformation("Player {Id} - {Nickname} pay income tax", player.Id, player.Nickname);
-                await hub.NotifyPlayer(player.Id, "PayIncomeTax", new { incomeTax }, cancellationToken);
+                await hub.NotifyAllPlayers("PayIncomeTax", new { incomeTax, player.Id }, cancellationToken);
                 break;
             case SpecialFields.FreeParking:
                 break;
@@ -123,8 +123,7 @@ public class MovePlayerNotificationHandler(
         logger.LogInformation("Player {Id} - {Nickname} pay rent {Rent} to {OwnerId} - {OwnerNickname}", player.Id,
             player.Nickname, rent, owner.Id, owner.Nickname);
 
-        await hub.NotifyPlayer(player.Id, "PayRent", new { owner.Nickname, rent }, cancellationToken);
-        await hub.NotifyPlayer(owner.Id, "ReceiveRent", new { player.Nickname, rent }, cancellationToken);
+        await hub.NotifyAllPlayers("Rent", new { SenderId = player.Nickname, RecipientId = owner.Id, rent }, cancellationToken);
     }
 
     private async Task HandleBankrupt(Player player, Player owner, CancellationToken cancellationToken = default)
@@ -141,7 +140,7 @@ public class MovePlayerNotificationHandler(
         await hub.NotifyPlayer(currentPlayerId, "YourTurn", cancellationToken);
         await hub.NotifyAllPlayers("NextPlayer", new { currentPlayerId }, cancellationToken);
 
-        await hub.NotifyPlayer(owner.Id, "ReceiveRent", new { player.Nickname, rent }, cancellationToken);
+        await hub.NotifyAllPlayers("Rent", new { SenderId = player.Nickname, RecipientId = owner.Id, rent }, cancellationToken);
         await hub.NotifyAllPlayers("PlayerBankrupt", new { player.Id }, cancellationToken);
     }
 }

@@ -160,10 +160,11 @@ Zwracane odpowiedzi:
 
 ---
 
-- *PayIncomeTax* -> **Player**
+- *PayIncomeTax* -> **All**
 
   ```json 
   {
+    "Id": "PlayerID",
     "incomeTax": 123
   }
   ```
@@ -181,22 +182,12 @@ Zwracane odpowiedzi:
 
 ---
 
-- *PayRent* -> **Player**
+- *Rent* -> **All**
 
   ```json 
   {
-    "Nickname": "OwnerNickname",
-    "Rent": 123
-  }
-  ```
-
----
-
-- *ReceiveRent* -> **Player**
-
-  ```json 
-  {
-    "Nickname": "PayedPlayerNickname",
+    "SenderId": "Player Paying Rent Id",
+    "RecipientId": "Player Receiving RentId",
     "Rent": 123
   }
   ```
