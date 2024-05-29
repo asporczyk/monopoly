@@ -12,7 +12,31 @@ export const useGameStore = defineStore('game', () => {
 
   const isLastRollDouble = ref(false)
 
+  const canActivePlayerRoll = ref(false)
+
+  const canActivePlayerBuyProperty = ref(false)
+
+  const isActivePlayersTurn = ref(false)
+
+  const propertyToBuy = ref<Property | null>(null)
+
+  const payment = ref<Payment | null>(null)
+
+  const income = ref<Income | null>(null)
+
   const saveDiceRoll = (rolls: number[]) => {
+    if (rolls[0] === rolls[1]) {
+      if (isLastRollDouble.value) {
+        console.log('TODO - go to prison')
+        isLastRollDouble.value = false
+        return
+      }
+
+      lastDiceRoll.value = lastDiceRoll.value + rolls[0] + rolls[1]
+      isLastRollDouble.value = true
+      return
+    }
+
     lastDiceRoll.value = rolls[0] + rolls[1]
     isLastRollDouble.value = rolls[0] === rolls[1]
   }
@@ -62,6 +86,87 @@ export const useGameStore = defineStore('game', () => {
     areAllPlayersReady.value = value
   }
 
+  const setIsActivePlayersTurn = (value: boolean) => {
+    isActivePlayersTurn.value = value
+    canActivePlayerRoll.value = true
+  }
+
+  const setPlayerPosition = (playerId: string, position: number) => {
+    players.value.map((player) => {
+      if (player.id === playerId) {
+        player.position = position
+      }
+      return player
+    })
+  }
+
+  const setCanActivePlayerBuyProperty = (
+    value: boolean,
+    name?: string,
+    price?: number,
+  ) => {
+    canActivePlayerBuyProperty.value = value
+    if (value) {
+      propertyToBuy.value = { name: name!, price: price! }
+    } else {
+      propertyToBuy.value = null
+    }
+  }
+
+  const setCanActivePlayerRoll = (value: boolean) => {
+    canActivePlayerRoll.value = value
+  }
+
+  const setPlayerGoToJail = (playerId: string) => {
+    players.value.map((player) => {
+      if (player.id === playerId) {
+        player.position = 10
+        player.isInJail = true
+        player.jailTurns = 3
+      }
+      return player
+    })
+  }
+
+  const setPayment = (
+    type: 'rent' | 'tax',
+    amount: number,
+    playerId: string,
+  ) => {
+    players.value.filter((player) => player.id === playerId)[0].money -= amount
+    if (playerId === activePlayerId.value) {
+      payment.value = { type, amount }
+    }
+  }
+
+  const clearPayment = () => {
+    payment.value = null
+  }
+
+  const setIncome = (
+    type: 'rent' | 'bonus',
+    amount: number,
+    playerId: string,
+  ) => {
+    players.value.filter((player) => player.id === playerId)[0].money += amount
+    if (playerId === activePlayerId.value) {
+      income.value = { type, amount }
+    }
+  }
+
+  const clearIncome = () => {
+    income.value = null
+  }
+
+  const setIsPlayerBankrupt = (playerId: string) => {
+    players.value.map((player) => {
+      if (player.id === playerId) {
+        player.isBankrupt = true
+      }
+      return player
+    })
+  }
+
   return {
     lastDiceRoll,
     isLastRollDouble,
@@ -72,5 +177,21 @@ export const useGameStore = defineStore('game', () => {
     areAllPlayersReady,
     setAreAllPlayersReady,
     setActivePlayerId,
+    isActivePlayersTurn,
+    setIsActivePlayersTurn,
+    setPlayerPosition,
+    canActivePlayerRoll,
+    canActivePlayerBuyProperty,
+    setCanActivePlayerBuyProperty,
+    setCanActivePlayerRoll,
+    propertyToBuy,
+    setPlayerGoToJail,
+    setPayment,
+    payment,
+    clearPayment,
+    income,
+    setIncome,
+    clearIncome,
+    setIsPlayerBankrupt,
   }
 })

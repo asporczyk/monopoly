@@ -8,6 +8,7 @@ import CenteredModal from '@/components/organisms/CenteredModal/CenteredModal.vu
 import TextBody from '@/components/atoms/Typography/TextBody.vue'
 import { useGameStore } from '@/stores/game'
 import { storeToRefs } from 'pinia'
+import { connection } from '@/api/SignalRConnection'
 
 const { t } = useI18n()
 const currentDiceRoll = ref<number[]>([])
@@ -15,7 +16,7 @@ const openModal = ref(false)
 
 const gameStore = useGameStore()
 
-const { lastDiceRoll } = storeToRefs(gameStore)
+const { lastDiceRoll, isLastRollDouble } = storeToRefs(gameStore)
 
 const { rollDice } = useRollDice()
 
@@ -25,11 +26,17 @@ const handleRollDice = () => {
   openModal.value = true
   gameStore.saveDiceRoll(currentDiceRoll.value)
 }
+
+const movePlayer = () => {
+  connection.invoke('MovePlayer', 4)
+  openModal.value = false
+  gameStore.setCanActivePlayerRoll(isLastRollDouble.value)
+}
 </script>
 <template>
   <TextButton @click="handleRollDice">{{ t('roll-dice') }}</TextButton>
   <CenteredModal v-model="openModal" class="d-flex flex-row">
-    <template #title> Wylosowane liczby </template>
+    <template #title>{{ t('rolled-numbers') }}</template>
     <template #body>
       <div class="d-flex flex-column align-center">
         <div class="d-flex flex-row">
@@ -38,9 +45,13 @@ const handleRollDice = () => {
         </div>
         <TextBody
           >{{ currentDiceRoll[0] }} + {{ currentDiceRoll[1] }} =
-          {{ lastDiceRoll }}
+          {{ currentDiceRoll[0] + currentDiceRoll[1] }}
         </TextBody>
-        <TextButton @click="openModal = false">{{ t('common.ok') }}</TextButton>
+        <TextBody v-if="isLastRollDouble">{{ t('double') }}</TextBody>
+        <TextButton
+          @click="() => (isLastRollDouble ? handleRollDice() : movePlayer())"
+          >{{ t('common.ok') }}</TextButton
+        >
       </div>
     </template>
   </CenteredModal>
@@ -48,10 +59,14 @@ const handleRollDice = () => {
 <i18n>
 {
   "en": {
-    "roll-dice": "Roll dice"
+    "roll-dice": "Roll dice",
+    "rolled-numbers": "Rolled numbers",
+    "double": "Double, roll again!"
   },
   "pl": {
-    "roll-dice": "Rzuć kostką"
+    "roll-dice": "Rzuć kostką",
+    "rolled-numbers": "Wylosowane liczby",
+    "double": "Dublet, rzuć jeszcze raz!"
   }
 }
 </i18n>
