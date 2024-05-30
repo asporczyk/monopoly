@@ -242,7 +242,8 @@ Zwracane odpowiedzi:
   ```json 
   {
     "Id": "PlayerID",
-    "Name": "Wall Street"
+    "Name": "Wall Street",
+    "Price": 123
   }
   ```
 
@@ -336,7 +337,8 @@ Zwracane odpowiedzi:
   {
     "Id": "PlayerID",
     "Name": "Wall Street",
-    "Houses": 1
+    "Houses": 1,
+    "HouseCost": 50
   }
   ```
 
@@ -352,7 +354,8 @@ Zwracane odpowiedzi:
   {
     "Id": "PlayerID",
     "Name": "Wall Street",
-    "HasHotel": true
+    "HasHotel": true,
+    "HotelCost": 50
   }
   ```
 

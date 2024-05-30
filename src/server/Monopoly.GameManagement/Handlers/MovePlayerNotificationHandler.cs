@@ -123,7 +123,7 @@ public class MovePlayerNotificationHandler(
         logger.LogInformation("Player {Id} - {Nickname} pay rent {Rent} to {OwnerId} - {OwnerNickname}", player.Id,
             player.Nickname, rent, owner.Id, owner.Nickname);
 
-        await hub.NotifyAllPlayers("Rent", new { SenderId = player.Nickname, RecipientId = owner.Id, rent }, cancellationToken);
+        await hub.NotifyAllPlayers("Rent", new { SenderId = player.Id, RecipientId = owner.Id, rent }, cancellationToken);
     }
 
     private async Task HandleBankrupt(Player player, Player owner, CancellationToken cancellationToken = default)
@@ -140,7 +140,7 @@ public class MovePlayerNotificationHandler(
         await hub.NotifyPlayer(currentPlayerId, "YourTurn", cancellationToken);
         await hub.NotifyAllPlayers("NextPlayer", new { currentPlayerId }, cancellationToken);
 
-        await hub.NotifyAllPlayers("Rent", new { SenderId = player.Nickname, RecipientId = owner.Id, rent }, cancellationToken);
+        await hub.NotifyAllPlayers("Rent", new { SenderId = player.Id, RecipientId = owner.Id, rent }, cancellationToken);
         await hub.NotifyAllPlayers("PlayerBankrupt", new { player.Id }, cancellationToken);
     }
 }

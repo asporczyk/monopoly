@@ -42,7 +42,7 @@ internal class BuyFieldNotificationHandler(
         }
 
         logger.LogInformation("Player {Id} - {Nickname} bought: {Name}", player.Id, player.Nickname, property.Name);
-        await hub.NotifyAllPlayers("FieldBought", new { player.Id, property.Name }, cancellationToken);
+        await hub.NotifyAllPlayers("FieldBought", new { player.Id, property.Name, property.Price }, cancellationToken);
     }
 
     private static bool BuyProperty(Property property, Player player)
