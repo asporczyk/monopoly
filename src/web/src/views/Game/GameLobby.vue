@@ -23,7 +23,6 @@ const ready = () => {
 }
 
 connection.on('PlayerReady', (data) => {
-  console.log(data)
   gameStore.setPlayerReady(data.id)
 })
 
@@ -41,6 +40,10 @@ connection.on('GameAlreadyStarted', () => {
 
 connection.on('GameStarted', () => {
   router.push('game')
+})
+
+connection.on('YourTurn', () => {
+  gameStore.setIsActivePlayersTurn(true)
 })
 </script>
 <template>

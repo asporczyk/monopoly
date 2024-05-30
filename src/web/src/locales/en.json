@@ -1,6 +1,7 @@
 {
   "app-name": "Monopoly",
   "common": {
-    "ok": "OK"
+    "ok": "OK",
+    "cancel": "Cancel"
   }
 }
