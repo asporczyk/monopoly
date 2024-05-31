@@ -6,6 +6,7 @@ import CenteredModal from '@/components/organisms/CenteredModal/CenteredModal.vu
 import { useGameStore } from '@/stores/game'
 import { storeToRefs } from 'pinia'
 import TextBody from '@/components/atoms/Typography/TextBody.vue'
+import { connection } from '@/api/SignalRConnection'
 
 const { t } = useI18n()
 
@@ -16,8 +17,16 @@ const gameStore = useGameStore()
 const { propertyToBuy } = storeToRefs(gameStore)
 
 const buyProperty = () => {
-  // TODO - buy property
+  connection.invoke('BuyField')
 }
+
+connection.on('FieldBought', (data) => {
+  gameStore.setPlayerProperties(data.id, {
+    name: data.name,
+    price: data.price,
+  })
+  gameStore.setCanActivePlayerBuyProperty(false)
+})
 </script>
 <template>
   <TextButton @click="openModal = true">{{ t('buy-property') }}</TextButton>

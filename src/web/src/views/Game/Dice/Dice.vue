@@ -28,7 +28,7 @@ const handleRollDice = () => {
 }
 
 const movePlayer = () => {
-  connection.invoke('MovePlayer', 4)
+  connection.invoke('MovePlayer', lastDiceRoll.value)
   openModal.value = false
   gameStore.setCanActivePlayerRoll(isLastRollDouble.value)
 }

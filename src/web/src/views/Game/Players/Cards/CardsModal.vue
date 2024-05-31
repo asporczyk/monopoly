@@ -1,117 +1,42 @@
 <script setup lang="ts">
 import CenteredModal from '@/components/organisms/CenteredModal/CenteredModal.vue'
-import { ref } from 'vue'
 import Card from '@/views/Game/Players/Cards/Card.vue'
 import HeadlineL from '@/components/atoms/Typography/HeadlineL.vue'
 import { useI18n } from 'vue-i18n'
+import { useGameStore } from '@/stores/game'
+import { storeToRefs } from 'pinia'
+import TextButton from '@/components/atoms/Buttons/TextButton.vue'
+import HeadlineM from '@/components/atoms/Typography/HeadlineM.vue'
 
 defineEmits(['close'])
 
 const { t } = useI18n()
 
-const cards = ref<Card[]>([
-  {
-    id: 1,
-    name: 'Card 1',
-    description: 'Description 1',
-    price: 100,
-    rent: 10,
-    color: 'red',
-    isProperty: true,
-  },
-  {
-    id: 2,
-    name: 'Card 2',
-    description: 'Description 2',
-    price: 200,
-    rent: 20,
-    color: 'blue',
-    isProperty: true,
-  },
-  {
-    id: 3,
-    name: 'Card 3',
-    description: 'Description 3',
-    price: 300,
-    rent: 30,
-    color: 'green',
-    isProperty: true,
-  },
-  {
-    id: 4,
-    name: 'Card 4',
-    description: 'Description 4',
-    price: 400,
-    rent: 40,
-    color: 'yellow',
-    isProperty: true,
-  },
-  {
-    id: 5,
-    name: 'Card 5',
-    description: 'Description 5',
-    price: 500,
-    rent: 50,
-    color: 'purple',
-    isProperty: true,
-  },
-  {
-    id: 6,
-    name: 'Card 6',
-    description: 'Description 6',
-    price: 600,
-    rent: 60,
-    color: 'orange',
-    isProperty: true,
-  },
-  {
-    id: 7,
-    name: 'Card 7',
-    description: 'Description 7',
-    price: 700,
-    rent: 70,
-    color: 'pink',
-    isProperty: true,
-  },
-  {
-    id: 8,
-    name: 'Card 8',
-    description: 'Description 8',
-    price: 800,
-    rent: 80,
-    color: 'brown',
-    isProperty: true,
-  },
-  {
-    id: 9,
-    name: 'Card 9',
-    description: 'Description 9',
-    price: 900,
-    rent: 90,
-    color: 'black',
-    isProperty: true,
-  },
-  {
-    id: 10,
-    name: 'Card 10',
-    description: 'Description 10',
-    price: 1000,
-    rent: 100,
-    color: 'white',
-    isProperty: true,
-  },
-])
+const gameStore = useGameStore()
+
+const { activePlayerProperties } = storeToRefs(gameStore)
 </script>
 <template>
-  <CenteredModal @on-close="$emit('close')">
+  <CenteredModal>
     <template #title>
       <HeadlineL>
         {{ t('your-cards') }}
       </HeadlineL>
     </template>
     <template #body>
-      <div class="d-flex flex-row overflow">
-        <Card v-for="card in cards" v-bind:key="card.id" :card="card" />
+      <div class="d-flex flex-column align-center">
+        <div
+          v-if="activePlayerProperties.length"
+          class="d-flex flex-row overflow"
+        >
+          <Card
+            v-for="card in activePlayerProperties"
+            v-bind:key="card.name"
+            :card="card"
+          />
+        </div>
+        <HeadlineM v-else>{{ t('empty') }}</HeadlineM>
+        <TextButton @click="$emit('close')">{{ t('close') }}</TextButton>
       </div>
     </template>
   </CenteredModal>
@@ -127,10 +52,14 @@ const cards = ref<Card[]>([
 <i18n>
 {
   "en": {
-    "your-cards": "Your cards"
+    "your-cards": "Your cards",
+    "close": "Close",
+    "empty": "Empty"
   },
   "pl": {
-    "your-cards": "Twoje karty"
+    "your-cards": "Twoje karty",
+    "close": "Zamknij",
+    "empty": "Pusto"
   }
 }
 </i18n>

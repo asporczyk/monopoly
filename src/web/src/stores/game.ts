@@ -15,6 +15,8 @@ export const useGameStore = defineStore('game', () => {
   const canActivePlayerRoll = ref(false)
 
   const canActivePlayerBuyProperty = ref(false)
+  const canActivePlayerBuyHouse = ref(false)
+  const canActivePlayerBuyHotel = ref(false)
 
   const isActivePlayersTurn = ref(false)
 
@@ -23,6 +25,8 @@ export const useGameStore = defineStore('game', () => {
   const payment = ref<Payment | null>(null)
 
   const income = ref<Income | null>(null)
+
+  const activePlayerProperties = ref<Card[]>([])
 
   const saveDiceRoll = (rolls: number[]) => {
     if (rolls[0] === rolls[1]) {
@@ -167,6 +171,65 @@ export const useGameStore = defineStore('game', () => {
     })
   }
 
+  const getPropertyColor = (position: number) => {
+    switch (position) {
+      case 1:
+      case 3:
+        return 'brown'
+      case 6:
+      case 8:
+      case 9:
+        return 'light-blue'
+      case 11:
+      case 13:
+      case 14:
+        return 'pink'
+      case 16:
+      case 18:
+      case 19:
+        return 'orange'
+      case 21:
+      case 23:
+      case 24:
+        return 'red'
+      case 26:
+      case 27:
+      case 29:
+        return 'yellow'
+      case 31:
+      case 32:
+      case 34:
+        return 'green'
+      case 37:
+      case 39:
+        return 'blue'
+      default:
+        return 'white'
+    }
+  }
+
+  const setPlayerProperties = (playerId: string, property: Property) => {
+    players.value.filter((player) => player.id === playerId)[0].money -=
+      property.price
+
+    if (playerId !== activePlayerId.value) {
+      return
+    }
+
+    const activePlayer = players.value.filter(
+      (player) => player.id === playerId,
+    )[0]
+
+    const color = getPropertyColor(activePlayer.position)
+
+    const card = {
+      ...property,
+      color,
+    }
+
+    activePlayerProperties.value.push(card)
+  }
+
   return {
     lastDiceRoll,
     isLastRollDouble,
@@ -193,5 +256,7 @@ export const useGameStore = defineStore('game', () => {
     setIncome,
     clearIncome,
     setIsPlayerBankrupt,
+    activePlayerProperties,
+    setPlayerProperties,
   }
 })

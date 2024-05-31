@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import TextBody from '@/components/atoms/Typography/TextBody.vue'
 import HeadlineXS from '@/components/atoms/Typography/HeadlineXS.vue'
+import { useI18n } from 'vue-i18n'
 
 interface CardProps {
   card: Card
 }
 
 defineProps<CardProps>()
+
+const { t } = useI18n()
 </script>
 <template>
   <v-card
@@ -21,11 +24,18 @@ defineProps<CardProps>()
     </template>
     <template #text>
       <div>
-        <TextBody>{{ card.description }}</TextBody>
-        <TextBody>{{ card.price }}</TextBody>
-        <TextBody>{{ card.rent }}</TextBody>
+        <TextBody>{{ t('price', { price: card.price }) }}</TextBody>
       </div>
     </template>
   </v-card>
 </template>
-<style scoped lang="scss"></style>
+<i18n>
+{
+  "en": {
+    "price": "Price: {price}$"
+  },
+  "pl": {
+    "price": "Cena: {price}$"
+  }
+}
+</i18n>

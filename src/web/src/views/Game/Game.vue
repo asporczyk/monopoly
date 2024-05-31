@@ -5,6 +5,8 @@ import GameActions from '@/views/Game/GameActions.vue'
 import { useGameStore } from '@/stores/game'
 import { storeToRefs } from 'pinia'
 import { connection } from '@/api/SignalRConnection'
+import Payment from '@/views/Game/Payment.vue'
+import Income from '@/views/Game/Income.vue'
 
 const gameStore = useGameStore()
 
@@ -38,7 +40,7 @@ connection.on('Rent', (data) => {
 })
 
 connection.on('PlayerMovedThroughGo', (data) => {
-  gameStore.setIncome('bonus', data.money, data.id)
+  gameStore.setIncome('bonus', 200, data.id)
 })
 
 connection.on('PlayerBankrupt', (data) => {
@@ -50,4 +52,6 @@ connection.on('PlayerBankrupt', (data) => {
     <Board />
   </PlayersWrapper>
   <GameActions v-if="isActivePlayersTurn" />
+  <Payment />
+  <Income />
 </template>
