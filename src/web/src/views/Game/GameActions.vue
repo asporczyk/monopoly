@@ -11,10 +11,29 @@ import { connection } from '@/api/SignalRConnection'
 const { t } = useI18n()
 
 const gameStore = useGameStore()
-const { canActivePlayerRoll, canActivePlayerBuyProperty } =
+const { canActivePlayerRoll, canActivePlayerBuyProperty, players } =
   storeToRefs(gameStore)
 
+const activePlayer = players.value.find((player) => player.isActivePlayer)
+
+const endTurnInJail = () => {
+  gameStore.decreseActivePlayersJailTurns()
+
+  if (activePlayer?.jailTurns === 0) {
+    connection.invoke('LeaveJail')
+  }
+}
+
+const payBail = () => {
+  connection.invoke('PayBail')
+  gameStore.setPayment('bail', 50, activePlayer?.id)
+}
+
 const endTurn = () => {
+  if (activePlayer?.isInJail) {
+    endTurnInJail()
+  }
+
   connection.invoke('EndTurn')
   gameStore.setCanActivePlayerBuyProperty(false)
   gameStore.setIsActivePlayersTurn(false)
@@ -24,10 +43,19 @@ const endTurn = () => {
   <div
     class="d-flex flex-column align-center position-absolute border rounded-xl semi-transparent-bg"
   >
-    <HeadlineM>{{ t('select-what-you-want-to-do') }}</HeadlineM>
+    <HeadlineM>{{
+      activePlayer?.isInJail ? t('in-jail') : t('select-what-you-want-to-do')
+    }}</HeadlineM>
     <Dice v-if="canActivePlayerRoll" />
     <Property v-if="canActivePlayerBuyProperty" />
-    <TextButton @click="endTurn">{{ t('end-turn') }}</TextButton>
+    <TextButton v-if="activePlayer?.isInJail" @click="payBail">{{
+      t('pay-bail')
+    }}</TextButton>
+    <TextButton @click="endTurn">{{
+      activePlayer?.isInJail
+        ? t('end-turn-jail', { turnsLeft: activePlayer.jailTurns })
+        : t('end-turn')
+    }}</TextButton>
   </div>
 </template>
 <style lang="scss">
@@ -40,11 +68,17 @@ const endTurn = () => {
 {
   "en": {
     "select-what-you-want-to-do": "Select what you want to do",
-    "end-turn": "End turn"
+    "end-turn": "End turn",
+    "in-jail": "You are in jail",
+    "end-turn-jail": "End turn ({turnsLeft} turns)",
+    "pay-bail": "Pay bail"
   },
   "pl": {
     "select-what-you-want-to-do": "Wybierz co chcesz zrobić",
-    "end-turn": "Zakończ turę"
+    "end-turn": "Zakończ turę",
+    "in-jail": "Jesteś w więzieniu",
+    "end-turn-jail": "Zakończ turę ({turnsLeft} tury)",
+    "pay-bail": "Zapłać kaucję"
   }
 }
 </i18n>

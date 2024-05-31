@@ -16,7 +16,9 @@ const openModal = ref(false)
 
 const gameStore = useGameStore()
 
-const { lastDiceRoll, isLastRollDouble } = storeToRefs(gameStore)
+const { lastDiceRoll, isLastRollDouble, players } = storeToRefs(gameStore)
+
+const activePlayer = players.value.find((player) => player.isActivePlayer)
 
 const { rollDice } = useRollDice()
 
@@ -31,6 +33,24 @@ const movePlayer = () => {
   connection.invoke('MovePlayer', lastDiceRoll.value)
   openModal.value = false
   gameStore.setCanActivePlayerRoll(isLastRollDouble.value)
+}
+
+const leaveJail = () => {
+  connection.invoke('LeaveJail')
+  openModal.value = false
+}
+
+const handleNotRolledDoubleInJail = () => {
+  gameStore.setCanActivePlayerRoll(false)
+  openModal.value = false
+}
+
+const handleConfirm = () => {
+  if (activePlayer?.isInJail) {
+    isLastRollDouble.value ? leaveJail() : handleNotRolledDoubleInJail()
+  } else {
+    isLastRollDouble.value ? handleRollDice() : movePlayer()
+  }
 }
 </script>
 <template>
@@ -48,10 +68,7 @@ const movePlayer = () => {
           {{ currentDiceRoll[0] + currentDiceRoll[1] }}
         </TextBody>
         <TextBody v-if="isLastRollDouble">{{ t('double') }}</TextBody>
-        <TextButton
-          @click="() => (isLastRollDouble ? handleRollDice() : movePlayer())"
-          >{{ t('common.ok') }}</TextButton
-        >
+        <TextButton @click="handleConfirm">{{ t('common.ok') }}</TextButton>
       </div>
     </template>
   </CenteredModal>

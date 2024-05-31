@@ -28,7 +28,9 @@ connection.on('PlayerGoToJail', (data) => {
   gameStore.setPlayerGoToJail(data.id)
 })
 
-// TODO - handle leave jail
+connection.on('PlayerLeftJail', (data) => {
+  gameStore.setPlayerLeftJail(data.id)
+})
 
 connection.on('PayIncomeTax', (data) => {
   gameStore.setPayment('tax', data.incomeTax, data.id)
