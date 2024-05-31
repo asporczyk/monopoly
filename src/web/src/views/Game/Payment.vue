@@ -36,12 +36,14 @@ const confirm = () => {
     "payment": "Payment",
     "payment-details-tax": "Income tax has been charged",
     "payment-details-rent": "Rent has been charged",
+    "payment-details-bail": "Bail has been paid",
     "price": "In the amount of {price}$"
   },
   "pl": {
     "payment": "Płatność",
     "payment-details-tax": "Został naliczony podatek",
     "payment-details-rent": "Został naliczony czynsz",
+    "payment-details-bail": "Została zapłacona kaucja",
     "price": "W wysokości {price}$"
   }
 }

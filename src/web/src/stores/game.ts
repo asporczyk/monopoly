@@ -15,8 +15,6 @@ export const useGameStore = defineStore('game', () => {
   const canActivePlayerRoll = ref(false)
 
   const canActivePlayerBuyProperty = ref(false)
-  const canActivePlayerBuyHouse = ref(false)
-  const canActivePlayerBuyHotel = ref(false)
 
   const isActivePlayersTurn = ref(false)
 
@@ -132,8 +130,18 @@ export const useGameStore = defineStore('game', () => {
     })
   }
 
+  const setPlayerLeftJail = (playerId: string) => {
+    players.value.map((player) => {
+      if (player.id === playerId) {
+        player.isInJail = false
+        player.jailTurns = 0
+      }
+      return player
+    })
+  }
+
   const setPayment = (
-    type: 'rent' | 'tax',
+    type: 'rent' | 'tax' | 'bail',
     amount: number,
     playerId: string,
   ) => {
@@ -230,6 +238,15 @@ export const useGameStore = defineStore('game', () => {
     activePlayerProperties.value.push(card)
   }
 
+  const decreseActivePlayersJailTurns = () => {
+    players.value.map((player) => {
+      if (player.id === activePlayerId.value && player.jailTurns) {
+        player.jailTurns--
+      }
+      return player
+    })
+  }
+
   return {
     lastDiceRoll,
     isLastRollDouble,
@@ -249,6 +266,7 @@ export const useGameStore = defineStore('game', () => {
     setCanActivePlayerRoll,
     propertyToBuy,
     setPlayerGoToJail,
+    setPlayerLeftJail,
     setPayment,
     payment,
     clearPayment,
@@ -258,5 +276,6 @@ export const useGameStore = defineStore('game', () => {
     setIsPlayerBankrupt,
     activePlayerProperties,
     setPlayerProperties,
+    decreseActivePlayersJailTurns,
   }
 })
