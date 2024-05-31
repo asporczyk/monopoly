@@ -19,14 +19,6 @@ const { propertyToBuy } = storeToRefs(gameStore)
 const buyProperty = () => {
   connection.invoke('BuyField')
 }
-
-connection.on('FieldBought', (data) => {
-  gameStore.setPlayerProperties(data.id, {
-    name: data.name,
-    price: data.price,
-  })
-  gameStore.setCanActivePlayerBuyProperty(false)
-})
 </script>
 <template>
   <TextButton @click="openModal = true">{{ t('buy-property') }}</TextButton>
