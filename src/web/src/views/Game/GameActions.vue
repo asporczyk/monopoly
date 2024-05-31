@@ -5,8 +5,6 @@ import { useI18n } from 'vue-i18n'
 import { useGameStore } from '@/stores/game'
 import { storeToRefs } from 'pinia'
 import Property from '@/views/Game/Property.vue'
-import Payment from '@/views/Game/Payment.vue'
-import Income from '@/views/Game/Income.vue'
 import TextButton from '@/components/atoms/Buttons/TextButton.vue'
 import { connection } from '@/api/SignalRConnection'
 
@@ -29,8 +27,6 @@ const endTurn = () => {
     <HeadlineM>{{ t('select-what-you-want-to-do') }}</HeadlineM>
     <Dice v-if="canActivePlayerRoll" />
     <Property v-if="canActivePlayerBuyProperty" />
-    <Payment />
-    <Income />
     <TextButton @click="endTurn">{{ t('end-turn') }}</TextButton>
   </div>
 </template>
