@@ -42,7 +42,7 @@ const openCardsModal = ref(false)
         icon="mdi-check"
       />
     </div>
-    <div v-if="!isInLobby && !player.isBankrupt">
+    <div v-if="!isInLobby && !player?.isBankrupt">
       <TextCaption>{{ t('bank', { amount: player?.money }) }}</TextCaption>
       <TextButton
         v-if="player?.isActivePlayer"
@@ -50,7 +50,9 @@ const openCardsModal = ref(false)
         >{{ t('cards') }}</TextButton
       >
     </div>
-    <TextCaption v-else-if="player.isBankrupt">{{ t('bankrupt') }}</TextCaption>
+    <TextCaption v-else-if="player?.isBankrupt">{{
+      t('bankrupt')
+    }}</TextCaption>
   </div>
   <CardsModal v-model="openCardsModal" @close="openCardsModal = false" />
 </template>
